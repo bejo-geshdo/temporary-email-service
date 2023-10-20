@@ -10,5 +10,3 @@ def generate_new_address():
     domain = "mail.castrojonsson.se"
     address = generate_random_string(8) + "@" + domain
     return address
-
-print(generate_new_address())

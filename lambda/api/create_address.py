@@ -3,17 +3,17 @@ import json
 
 import boto3
 
-from date import get_date_plus_10_min, get_date_now
-from util import generate_new_address
+from utils.date import get_date_plus_10_min, get_date_now
+from utils.util import generate_new_address
 
 #table_name = os.environ["TABLE_NAME"]
 table_name = "test"
 domain = "mail.castrojonsson.se"
 
-def lambda_handler(event, context):
-    dynamodb = boto3.resource('dynamodb')
-    table = dynamodb.Table(table_name)
+dynamodb = boto3.resource('dynamodb')
+table = dynamodb.Table(table_name)
 
+def lambda_handler(event, context):
     new_address = generate_new_address()
 
     new_address_item = {
@@ -31,6 +31,5 @@ def lambda_handler(event, context):
         'statusCode': 200,
         'body': json.dumps('Hello from Lambda!')
     }
-
 
 
