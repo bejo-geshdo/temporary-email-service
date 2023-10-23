@@ -8,6 +8,13 @@ def get_date_plus_10_min():
     return unixTimeStamp
 
 
+def get_date_plus_24_hour():
+    now = datetime.now()
+    twentyfour_hours = now + timedelta(hours=24)
+    unixTimeStamp = int(datetime.timestamp(twentyfour_hours))
+    return unixTimeStamp
+
+
 def get_date_now():
     now = datetime.now()
     unixTimeStamp = int(datetime.timestamp(now))
