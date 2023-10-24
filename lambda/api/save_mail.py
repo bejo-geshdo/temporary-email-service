@@ -12,10 +12,14 @@ import boto3
 
 from utils.check_address import check_active_address
 from utils.date import get_date_plus_10_min, get_date_now
+from utils.email import parse_email
 
 table_name = os.environ["TABLE_NAME"]
+bucket_name = os.environ["BUCKET_NAME"]
 
 dynamodb = boto3.resource("dynamodb")
+s3 = boto3.client("s3")
+
 table = dynamodb.Table(table_name)
 
 
@@ -27,7 +31,11 @@ def lambda_handler(event, context):
     recipients = receipt["recipients"]
 
     # Download and pars eml file here
-    teaser = "teaser"
+
+    eml = s3.get_object(Bucket=bucket_name, Key="test/" + message_id)
+    msg = parse_email(eml["Body"].read())
+
+    teaser = "Not implemented"
 
     for recipient in recipients:
         if check_active_address(recipient, table):
