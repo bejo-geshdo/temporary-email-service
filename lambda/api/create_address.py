@@ -5,7 +5,7 @@ import boto3
 
 from utils.date import get_date_plus_10_min, get_date_now
 from utils.util import generate_new_address
-from utils.check_address import check_active_address
+from utils.check_address import check_active_address, check_inactive_address
 
 table_name = os.environ["TABLE_NAME"]
 domain = "mail.castrojonsson.se"
@@ -17,7 +17,10 @@ table = dynamodb.Table(table_name)
 def lambda_handler(event, context):
     new_address = generate_new_address()
 
-    if check_active_address(new_address, table):
+    # TODO add retry logic if address exists
+    if check_active_address(new_address, table) or check_inactive_address(
+        new_address, table
+    ):
         return {"statusCode": 400, "body": json.dumps("address exists")}
 
     new_address_item = {
