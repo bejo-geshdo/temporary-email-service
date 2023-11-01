@@ -13,7 +13,7 @@ module "newAddress" {
   methods = [{
     method        = "GET"
     authorization = "NONE"
-    lambda        = aws_lambda_function.lambda_function
+    lambda        = aws_lambda_function.create_address
   }]
 
 }

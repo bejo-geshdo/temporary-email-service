@@ -12,3 +12,8 @@ provider "aws" {
   region  = "eu-west-1"
   profile = "bejo-privat"
 }
+
+resource "aws_s3_bucket" "saved_mails" {
+  bucket        = "mail.castrojonsson.se-ses2"
+  force_destroy = true
+}

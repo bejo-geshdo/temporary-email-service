@@ -1,9 +1,3 @@
-data "archive_file" "lambda_zip" {
-  type        = "zip"
-  source_dir  = "../lambda/api/"
-  output_path = ".terraform/zips/lambda_test.zip"
-}
-
 resource "aws_iam_role" "lambda_role" {
   name = "lambda_role"
 
@@ -53,6 +47,22 @@ resource "aws_iam_policy" "ses_full_access" {
   })
 }
 
+resource "aws_iam_policy" "ses_s3_access" {
+  name        = "ses_s3_access"
+  description = "Provides access to the bucket with mails"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect   = "Allow"
+        Action   = "*"
+        Resource = "${aws_s3_bucket.saved_mails.arn}*"
+      }
+    ]
+  })
+}
+
 resource "aws_iam_policy" "lambda_logs" {
   name        = "lambda_logs"
   description = "Allows functions to write logs to CloudWatch Logs"
@@ -63,7 +73,6 @@ resource "aws_iam_policy" "lambda_logs" {
       {
         Effect = "Allow",
         Action = [
-          "logs:CreateLogGroup",
           "logs:CreateLogStream",
           "logs:PutLogEvents"
         ],
@@ -72,7 +81,6 @@ resource "aws_iam_policy" "lambda_logs" {
     ]
   })
 }
-
 
 resource "aws_iam_role_policy_attachment" "lambda_dynamodb_full_access" {
   role       = aws_iam_role.lambda_role.name
@@ -89,14 +97,24 @@ resource "aws_iam_role_policy_attachment" "lambda_basic" {
   policy_arn = aws_iam_policy.lambda_logs.arn
 }
 
+resource "aws_iam_role_policy_attachment" "ses_s3" {
+  role       = aws_iam_role.lambda_role.name
+  policy_arn = aws_iam_policy.ses_s3_access.arn
+}
 
-resource "aws_lambda_function" "lambda_function" {
-  filename      = ".terraform/zips/lambda_test.zip"
-  function_name = "test_tf_lambda"
+data "archive_file" "create_address" {
+  type        = "zip"
+  source_dir  = "../lambda/api/"
+  output_path = ".terraform/zips/create_address.zip"
+}
+
+resource "aws_lambda_function" "create_address" {
+  filename      = ".terraform/zips/create_address.zip"
+  function_name = "create_address2"
   role          = aws_iam_role.lambda_role.arn
   handler       = "create_address.lambda_handler"
 
-  source_code_hash = data.archive_file.lambda_zip.output_base64sha256
+  source_code_hash = data.archive_file.create_address.output_base64sha256
 
   runtime = "python3.11"
 
@@ -105,4 +123,37 @@ resource "aws_lambda_function" "lambda_function" {
       TABLE_NAME = "email"
     }
   }
+}
+
+resource "aws_cloudwatch_log_group" "create_address" {
+  name              = "/aws/lambda/${aws_lambda_function.create_address.function_name}"
+  retention_in_days = 7
+}
+
+data "archive_file" "save_mail" {
+  type        = "zip"
+  source_dir  = "../lambda/api/"
+  output_path = ".terraform/zips/save_mail.zip"
+}
+resource "aws_lambda_function" "save_mail" {
+  filename      = ".terraform/zips/create_address.zip"
+  function_name = "save_mail"
+  role          = aws_iam_role.lambda_role.arn
+  handler       = "save_mail.lambda_handler"
+
+  source_code_hash = data.archive_file.save_mail.output_base64sha256
+
+  runtime = "python3.11"
+
+  environment {
+    variables = {
+      TABLE_NAME  = "email"
+      BUCKET_NAME = aws_s3_bucket.saved_mails.id
+    }
+  }
+}
+
+resource "aws_cloudwatch_log_group" "save_mail" {
+  name              = "/aws/lambda/${aws_lambda_function.save_mail.function_name}"
+  retention_in_days = 7
 }
