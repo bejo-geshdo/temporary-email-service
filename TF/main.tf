@@ -13,6 +13,8 @@ provider "aws" {
   profile = "bejo-privat"
 }
 
+data "aws_caller_identity" "current" {}
+
 resource "aws_s3_bucket" "saved_mails" {
   bucket        = "mail.castrojonsson.se-ses2"
   force_destroy = true

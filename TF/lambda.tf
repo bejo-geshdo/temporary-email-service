@@ -159,8 +159,8 @@ resource "aws_cloudwatch_log_group" "save_mail" {
 }
 
 data "archive_file" "check_address" {
-  type = "zip"
-  source_dir = "../lambda/api/"
+  type        = "zip"
+  source_dir  = "../lambda/api/"
   output_path = ".terraform/zips/check_address.zip"
 }
 
@@ -176,7 +176,7 @@ resource "aws_lambda_function" "check_address" {
 
   environment {
     variables = {
-      TABLE_NAME  = "email"
+      TABLE_NAME = "email"
     }
   }
 }
