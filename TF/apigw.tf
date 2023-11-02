@@ -45,6 +45,20 @@ module "get_singed_url" {
   }]
 }
 
+module "delete" {
+  source = "./modules/api_gw_path"
+
+  path_name   = "delete"
+  api_gw      = aws_api_gateway_rest_api.api_gw
+  parent_path = null
+
+  methods = [{
+    method        = "DELETE"
+    authorization = "NONE"
+    lambda        = aws_lambda_function.delete
+  }]
+}
+
 resource "aws_api_gateway_deployment" "deploy" {
   rest_api_id = aws_api_gateway_rest_api.api_gw.id
 

@@ -19,12 +19,17 @@ def lambda_handler(event, context):
 
     for recipient in recipients:
         if check_active_address(recipient, table):
+            print(f"Found address {recipient} in DB")
             found = True
             break
+        else:
+            print(f"NOT FOUND address {recipient} in DB")
 
     if found:
         # If the email is found go to the next rule (save to s3)
+        print("Rule STOPED")
         return {"disposition": "STOP_RULE"}
     else:
         # If not found continue the current rule (bounce email)
+        print("Rule Continue")
         return {"disposition": "CONTINUE"}

@@ -17,7 +17,8 @@ resource "aws_lambda_function" "create_address" {
 
   environment {
     variables = {
-      TABLE_NAME = "email"
+      TABLE_NAME = aws_dynamodb_table.inbox_now.name
+      DOMAIN = var.email_domain
     }
   }
 }
@@ -45,7 +46,7 @@ resource "aws_lambda_function" "save_mail" {
 
   environment {
     variables = {
-      TABLE_NAME  = "email"
+      TABLE_NAME  = aws_dynamodb_table.inbox_now.name
       BUCKET_NAME = aws_s3_bucket.saved_mails.id
     }
   }
@@ -75,7 +76,7 @@ resource "aws_lambda_function" "check_address" {
 
   environment {
     variables = {
-      TABLE_NAME = "email"
+      TABLE_NAME = aws_dynamodb_table.inbox_now.name
     }
   }
 }
@@ -104,7 +105,7 @@ resource "aws_lambda_function" "get_mails" {
 
   environment {
     variables = {
-      TABLE_NAME = "email"
+      TABLE_NAME = aws_dynamodb_table.inbox_now.name
     }
   }
 }
@@ -133,7 +134,7 @@ resource "aws_lambda_function" "get_singed_url" {
 
   environment {
     variables = {
-      TABLE_NAME  = "email"
+      TABLE_NAME  = aws_dynamodb_table.inbox_now.name
       BUCKET_NAME = aws_s3_bucket.saved_mails.id
     }
   }
@@ -141,5 +142,35 @@ resource "aws_lambda_function" "get_singed_url" {
 
 resource "aws_cloudwatch_log_group" "get_singed_url" {
   name              = "/aws/lambda/${aws_lambda_function.get_singed_url.function_name}"
+  retention_in_days = 7
+}
+
+#Function to delete address and emails
+data "archive_file" "delete" {
+  type        = "zip"
+  source_dir  = "../lambda/api/"
+  output_path = ".terraform/zips/delete.zip"
+}
+
+resource "aws_lambda_function" "delete" {
+  filename      = ".terraform/zips/delete.zip"
+  function_name = "delete"
+  role          = aws_iam_role.lambda_role.arn
+  handler       = "delete.lambda_handler"
+
+  source_code_hash = data.archive_file.delete.output_base64sha256
+
+  runtime = "python3.11"
+
+  environment {
+    variables = {
+      TABLE_NAME  = aws_dynamodb_table.inbox_now.name
+      BUCKET_NAME = aws_s3_bucket.saved_mails.id
+    }
+  }
+}
+
+resource "aws_cloudwatch_log_group" "delete" {
+  name              = "/aws/lambda/${aws_lambda_function.delete.function_name}"
   retention_in_days = 7
 }

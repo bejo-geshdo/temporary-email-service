@@ -23,10 +23,10 @@ def delete_address(address: str, table, s3, bucket_name: str):
         )
 
         print("Successfully deleted")
-        return
+        return True
     except Exception as error:
         print(error)
-        return
+        return False
 
 
 def delete_mail(address: str, sk: str, table, s3, bucket_name: str):
@@ -40,11 +40,11 @@ def delete_mail(address: str, sk: str, table, s3, bucket_name: str):
         # Takes an S3 clients and deletes the item
         # TODO Make sure mail obj not delete if used by multiple
         # TODO Just delete the item and trigger an other function to delete S3 obj
-        s3.delete_object(Bucket=bucket_name, Key="test/" + message_id)
+        s3.delete_object(Bucket=bucket_name, Key=message_id)
 
         table.delete_item(Key=key)
         print("deleted email")
-        return
+        return True
     except Exception as error:
         print(error)
-        return
+        return False

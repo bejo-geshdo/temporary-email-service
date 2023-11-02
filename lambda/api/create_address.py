@@ -8,14 +8,14 @@ from utils.util import generate_new_address
 from utils.check_address import check_active_address, check_inactive_address
 
 table_name = os.environ["TABLE_NAME"]
-domain = "mail.castrojonsson.se"
+domain = os.environ["DOMAIN"]
 
 dynamodb = boto3.resource("dynamodb")
 table = dynamodb.Table(table_name)
 
 
 def lambda_handler(event, context):
-    new_address = generate_new_address()
+    new_address = generate_new_address(domain)
 
     # TODO add retry logic if address exists
     if check_active_address(new_address, table) or check_inactive_address(
