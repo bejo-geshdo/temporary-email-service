@@ -1,4 +1,63 @@
+resource "aws_ses_domain_identity" "main" {
+  domain = var.email_domain
+}
+
+resource "aws_ses_domain_dkim" "main" {
+  domain = aws_ses_domain_identity.main.domain
+}
+
+output "route53" {
+  value = aws_ses_domain_dkim.main
+}
+
+resource "aws_route53_record" "ses_dkim_record" {
+  count   = 3
+  zone_id = var.hosted_zone_id
+  name    = "${aws_ses_domain_dkim.main.dkim_tokens[count.index]}._domainkey.${var.email_domain}"
+  type    = "CNAME"
+  ttl     = "300"
+  records = ["${aws_ses_domain_dkim.main.dkim_tokens[count.index]}.dkim.amazonses.com"]
+}
+
+resource "aws_route53_record" "ses_mx_record" {
+  zone_id = var.hosted_zone_id
+  name = var.email_domain
+  type = "MX"
+  ttl = "300"
+  records = ["10 inbound-smtp.eu-west-1.amazonaws.com"]
+}
+
+resource "aws_route53_record" "ses_txt_record" {
+  zone_id = var.hosted_zone_id
+  name = var.email_domain
+  type = "TXT"
+  ttl = "300"
+  records = ["v=spf1 include:amazonses.com ~all"]
+}
+
+resource "aws_ses_domain_mail_from" "main" {
+  domain = aws_ses_domain_identity.main.domain
+  mail_from_domain = "bounce.${aws_ses_domain_identity.main.domain}"
+}
+
+resource "aws_route53_record" "ses_from_mx_record" {
+  zone_id = var.hosted_zone_id
+  name    = aws_ses_domain_mail_from.main.mail_from_domain
+  type    = "MX"
+  ttl     = "300"
+  records = ["10 feedback-smtp.eu-west-1.amazonses.com"] # Change to the region in which `aws_ses_domain_identity.example` is created
+}
+
+resource "aws_route53_record" "ses_from_txt_record" {
+  zone_id = var.hosted_zone_id
+  name    = aws_ses_domain_mail_from.main.mail_from_domain
+  type    = "TXT"
+  ttl     = "300"
+  records = ["v=spf1 include:amazonses.com -all"]
+} 
+
 resource "aws_ses_receipt_rule_set" "main" {
+  depends_on = [ aws_route53_record.ses_dkim_record, aws_route53_record.ses_mx_record  ]
   rule_set_name = "main"
 }
 
@@ -15,7 +74,7 @@ resource "aws_ses_receipt_rule" "check_address" {
   name          = "check_address"
   rule_set_name = aws_ses_receipt_rule_set.main.rule_set_name
 
-  recipients   = ["mail.castrojonsson.se"]
+  recipients   = [var.email_domain]
   enabled      = true
   scan_enabled = true
 
@@ -29,7 +88,7 @@ resource "aws_ses_receipt_rule" "check_address" {
     position = 2
 
     message         = "Mailbox does not exist"
-    sender          = "no-reply@mail.castrojonsson.se"
+    sender          = "no-reply@${aws_ses_domain_mail_from.main.mail_from_domain}"
     smtp_reply_code = "550"
     status_code     = "5.1.1"
   }
@@ -85,7 +144,7 @@ resource "aws_ses_receipt_rule" "s3" {
   rule_set_name = aws_ses_receipt_rule_set.main.rule_set_name
   after         = aws_ses_receipt_rule.check_address.name
 
-  recipients = ["mail.castrojonsson.se"]
+  recipients = [var.email_domain]
   enabled    = true
 
   s3_action {
