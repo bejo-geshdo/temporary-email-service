@@ -34,4 +34,7 @@ def lambda_handler(event, context):
 
     put_item = table.put_item(Item=new_address_item)
 
-    return {"statusCode": 200, "body": json.dumps("Hello from Lambda!")}
+    return {
+        "statusCode": 200,
+        "body": json.dumps(f"Created new email address: {new_address}"),
+    }

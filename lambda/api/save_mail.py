@@ -32,7 +32,7 @@ def lambda_handler(event, context):
 
     # Download and pars eml file here
 
-    eml = s3.get_object(Bucket=bucket_name, Key="test/" + message_id)
+    eml = s3.get_object(Bucket=bucket_name, Key=message_id)
     msg = parse_email(eml["Body"].read())
 
     teaser = "Not implemented"
