@@ -20,28 +20,28 @@ module "newAddress" {
 module "get_mails" {
   source = "./modules/api_gw_path"
 
-  path_name = "getMails"
-  api_gw = aws_api_gateway_rest_api.api_gw
+  path_name   = "getMails"
+  api_gw      = aws_api_gateway_rest_api.api_gw
   parent_path = null
 
   methods = [{
-    method = "GET"
+    method        = "GET"
     authorization = "NONE"
-    lambda = aws_lambda_function.get_mails
+    lambda        = aws_lambda_function.get_mails
   }]
 }
 
 module "get_singed_url" {
   source = "./modules/api_gw_path"
 
-  path_name = "getSingedUrls"
-  api_gw = aws_api_gateway_rest_api.api_gw
+  path_name   = "getSingedUrls"
+  api_gw      = aws_api_gateway_rest_api.api_gw
   parent_path = null
 
   methods = [{
-    method = "GET"
+    method        = "GET"
     authorization = "NONE"
-    lambda = aws_lambda_function.get_singed_url
+    lambda        = aws_lambda_function.get_singed_url
   }]
 }
 

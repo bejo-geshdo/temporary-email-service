@@ -16,6 +16,6 @@ provider "aws" {
 data "aws_caller_identity" "current" {}
 
 resource "aws_s3_bucket" "saved_mails" {
-  bucket        = "mail.castrojonsson.se-ses2"
+  bucket        = "mail.castrojonsson.se-ses"
   force_destroy = true
 }

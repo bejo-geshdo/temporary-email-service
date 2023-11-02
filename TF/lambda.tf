@@ -133,7 +133,7 @@ resource "aws_lambda_function" "get_singed_url" {
 
   environment {
     variables = {
-      TABLE_NAME = "email"
+      TABLE_NAME  = "email"
       BUCKET_NAME = aws_s3_bucket.saved_mails.id
     }
   }
