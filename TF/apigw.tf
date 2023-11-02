@@ -31,6 +31,19 @@ module "get_mails" {
   }]
 }
 
+module "get_singed_url" {
+  source = "./modules/api_gw_path"
+
+  path_name = "getSingedUrls"
+  api_gw = aws_api_gateway_rest_api.api_gw
+  parent_path = null
+
+  methods = [{
+    method = "GET"
+    authorization = "NONE"
+    lambda = aws_lambda_function.get_singed_url
+  }]
+}
 
 resource "aws_api_gateway_deployment" "deploy" {
   rest_api_id = aws_api_gateway_rest_api.api_gw.id
@@ -54,3 +67,4 @@ resource "aws_api_gateway_stage" "dev" {
 output "api_gw_url_prod" {
   value = aws_api_gateway_stage.dev.invoke_url
 }
+
