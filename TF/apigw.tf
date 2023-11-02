@@ -59,6 +59,20 @@ module "delete" {
   }]
 }
 
+module "extend_time" {
+  source = "./modules/api_gw_path"
+
+  path_name   = "extendTime"
+  api_gw      = aws_api_gateway_rest_api.api_gw
+  parent_path = null
+
+  methods = [{
+    method        = "PUT"
+    authorization = "NONE"
+    lambda        = aws_lambda_function.extend_time
+  }]
+}
+
 resource "aws_api_gateway_deployment" "deploy" {
   rest_api_id = aws_api_gateway_rest_api.api_gw.id
 

@@ -1,5 +1,6 @@
 import os
 import json
+import datetime
 
 import boto3
 
@@ -32,10 +33,10 @@ def lambda_handler(event, context):
 
     try:
         respons = table.update_item(
-            Key={{"pk": address, "sk": "address#active"}},
-            UpdateExpression="set ttl=:ttl",
+            Key={"pk": address, "sk": "address#active"},
+            UpdateExpression="set #t=:ttl",
             ExpressionAttributeValues={":ttl": new_ttl},
-            ReturnValues="UPDATED_NEW",
+            ExpressionAttributeNames={"#t": "ttl"},
         )
 
     except Exception as Error:
@@ -66,5 +67,7 @@ def lambda_handler(event, context):
 
     return {
         "statusCode": 200,
-        "body": json.dumps("Successfully updated address and email TTL"),
+        "body": json.dumps(
+            f"Successfully updated address and email TTL. New date: {datetime.datetime.utcfromtimestamp(new_ttl)}"
+        ),
     }

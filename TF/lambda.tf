@@ -174,3 +174,33 @@ resource "aws_cloudwatch_log_group" "delete" {
   name              = "/aws/lambda/${aws_lambda_function.delete.function_name}"
   retention_in_days = 7
 }
+
+#Function to extend address time
+data "archive_file" "extend_time" {
+  type        = "zip"
+  source_dir  = "../lambda/api/"
+  output_path = ".terraform/zips/extend_time.zip"
+}
+
+resource "aws_lambda_function" "extend_time" {
+  filename      = ".terraform/zips/extend_time.zip"
+  function_name = "extend_time"
+  role          = aws_iam_role.lambda_role.arn
+  handler       = "extend_time.lambda_handler"
+
+  source_code_hash = data.archive_file.extend_time.output_base64sha256
+
+  runtime = "python3.11"
+  timeout = 30
+
+  environment {
+    variables = {
+      TABLE_NAME  = aws_dynamodb_table.inbox_now.name
+    }
+  }
+}
+
+resource "aws_cloudwatch_log_group" "extend_time" {
+  name              = "/aws/lambda/${aws_lambda_function.extend_time.function_name}"
+  retention_in_days = 7
+}
