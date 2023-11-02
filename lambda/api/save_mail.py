@@ -53,7 +53,7 @@ def lambda_handler(event, context):
                 "virusVerdict": receipt["virusVerdict"]["status"],
                 "messageId": message_id,
                 "created_at": get_date_now(),
-                "ttl": get_date_plus_10_min(),
+                "ttl": get_date_plus_10_min(),  # TODO Change this to 24h
                 "domain": recipient.split("@")[1],
                 "email": recipient,
             }
