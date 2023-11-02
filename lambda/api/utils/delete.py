@@ -11,16 +11,17 @@ def delete_address(address: str, table, s3, bucket_name: str):
             Item={"pk": address, "sk": "address#inactive", "deleted_at": get_date_now()}
         )
 
-        with table.batch_writer() as batch:
-            for item in items:
-                batch.delete_item(Key={"pk": item["pk"], "sk": item["sk"]})
+        if len(items) > 0:
+            with table.batch_writer() as batch:
+                for item in items:
+                    batch.delete_item(Key={"pk": item["pk"], "sk": item["sk"]})
 
-        s3_object = [{"key": dictionary["messageId"]} for dictionary in items]
+            s3_object = [{"key": dictionary["messageId"]} for dictionary in items]
 
-        s3.delete_objects(
-            Bucket=bucket_name,
-            Delete={"Objects": s3_object},
-        )
+            s3.delete_objects(
+                Bucket=bucket_name,
+                Delete={"Objects": s3_object},
+            )
 
         print("Successfully deleted")
         return True
