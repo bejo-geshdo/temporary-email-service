@@ -15,7 +15,20 @@ module "newAddress" {
     authorization = "NONE"
     lambda        = aws_lambda_function.create_address
   }]
+}
 
+module "get_mails" {
+  source = "./modules/api_gw_path"
+
+  path_name = "getMails"
+  api_gw = aws_api_gateway_rest_api.api_gw
+  parent_path = null
+
+  methods = [{
+    method = "GET"
+    authorization = "NONE"
+    lambda = aws_lambda_function.get_mails
+  }]
 }
 
 

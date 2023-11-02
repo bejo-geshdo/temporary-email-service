@@ -35,5 +35,5 @@ resource "aws_lambda_permission" "this" {
   statement_id  = "AllowAPIGatewayInvoke"
   action        = "lambda:InvokeFunction"
   principal     = "apigateway.amazonaws.com"
-  source_arn    = "${var.api_gw.execution_arn}*" # Consider locking this down to method and path
+  source_arn    = "${var.api_gw.execution_arn}/*" # Consider locking this down to method and path
 }

@@ -57,7 +57,7 @@ resource "aws_iam_policy" "ses_s3_access" {
       {
         Effect   = "Allow"
         Action   = "*"
-        Resource = "${aws_s3_bucket.saved_mails.arn}*"
+        Resource = "${aws_s3_bucket.saved_mails.arn}/*"
       }
     ]
   })
