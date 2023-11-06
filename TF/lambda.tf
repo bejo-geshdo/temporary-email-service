@@ -1,7 +1,23 @@
+# Lambda Layers
+
+data "archive_file" "utils_layer" {
+  type        = "zip"
+  source_dir  = "../lambda/layers/utils/"
+  output_path = ".terraform/zips/utils_layer.zip"
+}
+
+resource "aws_lambda_layer_version" "utils_layer" {
+  filename = ".terraform/zips/utils_layer.zip"
+  layer_name = "utils_layer"
+
+  compatible_runtimes = [ "python3.11" ]
+  source_code_hash = data.archive_file.utils_layer.output_base64sha256
+}
+
 # Function to create a new email address
 data "archive_file" "create_address" {
   type        = "zip"
-  source_dir  = "../lambda/api/"
+  source_dir  = "../lambda/create_address/"
   output_path = ".terraform/zips/create_address.zip"
 }
 

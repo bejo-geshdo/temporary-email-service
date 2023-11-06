@@ -1,4 +1,7 @@
 {
   "editor.defaultFormatter": "ms-python.black-formatter",
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "python.analysis.extraPaths": [
+    "./lambda/layers/utils/python/lib/python3.11/site-packages"
+  ],
 }
