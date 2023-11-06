@@ -2,7 +2,7 @@ import os
 
 import boto3
 
-from utils.check_address import check_active_address
+from check_address import check_active_address
 
 table_name = os.environ["TABLE_NAME"]
 

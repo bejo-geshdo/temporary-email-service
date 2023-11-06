@@ -3,8 +3,8 @@ import json
 
 import boto3
 
-from utils.delete import delete_address, delete_mail
-from utils.check_address import check_active_address
+from delete import delete_address, delete_mail
+from check_address import check_active_address
 
 table_name = os.environ["TABLE_NAME"]
 

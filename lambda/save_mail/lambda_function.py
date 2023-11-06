@@ -10,9 +10,9 @@ from uuid import uuid4
 
 import boto3
 
-from utils.check_address import check_active_address
-from utils.date import get_date_plus_10_min, get_date_now
-from utils.email import parse_email
+from check_address import check_active_address
+from date import get_date_plus_10_min, get_date_now
+from ses_email import parse_email
 
 table_name = os.environ["TABLE_NAME"]
 bucket_name = os.environ["BUCKET_NAME"]

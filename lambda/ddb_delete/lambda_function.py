@@ -2,7 +2,7 @@ import os
 
 import boto3
 
-from utils.delete import delete_address_ddb, delete_mail_ddb
+from delete import delete_address_ddb, delete_mail_ddb
 
 table_name = os.environ["TABLE_NAME"]
 bucket_name = os.environ["BUCKET_NAME"]

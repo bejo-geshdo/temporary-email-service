@@ -4,9 +4,9 @@ import datetime
 
 import boto3
 
-from utils.date import get_date
-from utils.get_address import get_address
-from utils.get_mail import get_emails_ddb
+from date import get_date
+from get_address import get_address
+from get_mail import get_emails_ddb
 
 table_name = os.environ["TABLE_NAME"]
 

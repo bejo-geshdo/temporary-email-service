@@ -11,6 +11,7 @@ resource "aws_lambda_layer_version" "utils_layer" {
   layer_name = "utils_layer"
 
   compatible_runtimes = [ "python3.11" ]
+  compatible_architectures = [ "arm64", "x86_64" ]
   source_code_hash = data.archive_file.utils_layer.output_base64sha256
 }
 
@@ -25,11 +26,12 @@ resource "aws_lambda_function" "create_address" {
   filename      = ".terraform/zips/create_address.zip"
   function_name = "create_address"
   role          = aws_iam_role.lambda_role.arn
-  handler       = "create_address.lambda_handler"
+  handler       = "lambda_function.lambda_handler"
 
   source_code_hash = data.archive_file.create_address.output_base64sha256
 
   runtime = "python3.11"
+  layers = [ aws_lambda_layer_version.utils_layer.arn ]
 
   environment {
     variables = {
@@ -47,18 +49,19 @@ resource "aws_cloudwatch_log_group" "create_address" {
 # Function to recive, scan and save emails from SES to S3
 data "archive_file" "save_mail" {
   type        = "zip"
-  source_dir  = "../lambda/api/"
+  source_dir  = "../lambda/save_mail/"
   output_path = ".terraform/zips/save_mail.zip"
 }
 resource "aws_lambda_function" "save_mail" {
-  filename      = ".terraform/zips/create_address.zip"
+  filename      = ".terraform/zips/save_mail.zip"
   function_name = "save_mail"
   role          = aws_iam_role.lambda_role.arn
-  handler       = "save_mail.lambda_handler"
+  handler       = "lambda_function.lambda_handler"
 
   source_code_hash = data.archive_file.save_mail.output_base64sha256
 
   runtime = "python3.11"
+  layers = [ aws_lambda_layer_version.utils_layer.arn ]
 
   environment {
     variables = {
@@ -76,7 +79,7 @@ resource "aws_cloudwatch_log_group" "save_mail" {
 # Function to check if a email address exists and is active
 data "archive_file" "check_address" {
   type        = "zip"
-  source_dir  = "../lambda/api/"
+  source_dir  = "../lambda/check_address/"
   output_path = ".terraform/zips/check_address.zip"
 }
 
@@ -84,11 +87,12 @@ resource "aws_lambda_function" "check_address" {
   filename      = ".terraform/zips/check_address.zip"
   function_name = "check_address"
   role          = aws_iam_role.lambda_role.arn
-  handler       = "check_address.lambda_handler"
+  handler       = "lambda_function.lambda_handler"
 
   source_code_hash = data.archive_file.check_address.output_base64sha256
 
   runtime = "python3.11"
+  layers = [ aws_lambda_layer_version.utils_layer.arn ]
 
   environment {
     variables = {
@@ -105,19 +109,20 @@ resource "aws_cloudwatch_log_group" "check_address" {
 #Function to get emails for an address
 data "archive_file" "get_mails" {
   type        = "zip"
-  source_dir  = "../lambda/api/"
+  source_dir  = "../lambda/get_mails/"
   output_path = ".terraform/zips/get_mails.zip"
 }
 
 resource "aws_lambda_function" "get_mails" {
-  filename      = ".terraform/zips/check_address.zip"
+  filename      = ".terraform/zips/get_mails.zip"
   function_name = "get_mails"
   role          = aws_iam_role.lambda_role.arn
-  handler       = "get_mails.lambda_handler"
+  handler       = "lambda_function.lambda_handler"
 
   source_code_hash = data.archive_file.get_mails.output_base64sha256
 
   runtime = "python3.11"
+  layers = [ aws_lambda_layer_version.utils_layer.arn ]
 
   environment {
     variables = {
@@ -134,7 +139,7 @@ resource "aws_cloudwatch_log_group" "get_mails" {
 #Function to create signed S3 URLs to download emails
 data "archive_file" "get_singed_url" {
   type        = "zip"
-  source_dir  = "../lambda/api/"
+  source_dir  = "../lambda/get_singed_url/"
   output_path = ".terraform/zips/get_singed_url.zip"
 }
 
@@ -142,11 +147,12 @@ resource "aws_lambda_function" "get_singed_url" {
   filename      = ".terraform/zips/get_singed_url.zip"
   function_name = "get_singed_url"
   role          = aws_iam_role.lambda_role.arn
-  handler       = "get_singed_url.lambda_handler"
+  handler       = "lambda_function.lambda_handler"
 
   source_code_hash = data.archive_file.get_singed_url.output_base64sha256
 
   runtime = "python3.11"
+  layers = [ aws_lambda_layer_version.utils_layer.arn ]
 
   environment {
     variables = {
@@ -164,7 +170,7 @@ resource "aws_cloudwatch_log_group" "get_singed_url" {
 #Function to delete address and emails
 data "archive_file" "delete" {
   type        = "zip"
-  source_dir  = "../lambda/api/"
+  source_dir  = "../lambda/delete/"
   output_path = ".terraform/zips/delete.zip"
 }
 
@@ -172,11 +178,12 @@ resource "aws_lambda_function" "delete" {
   filename      = ".terraform/zips/delete.zip"
   function_name = "delete"
   role          = aws_iam_role.lambda_role.arn
-  handler       = "delete.lambda_handler"
+  handler       = "lambda_function.lambda_handler"
 
   source_code_hash = data.archive_file.delete.output_base64sha256
 
   runtime = "python3.11"
+  layers = [ aws_lambda_layer_version.utils_layer.arn ]
 
   environment {
     variables = {
@@ -193,7 +200,7 @@ resource "aws_cloudwatch_log_group" "delete" {
 #Function to extend address time
 data "archive_file" "extend_time" {
   type        = "zip"
-  source_dir  = "../lambda/api/"
+  source_dir  = "../lambda/extend_time/"
   output_path = ".terraform/zips/extend_time.zip"
 }
 
@@ -201,11 +208,12 @@ resource "aws_lambda_function" "extend_time" {
   filename      = ".terraform/zips/extend_time.zip"
   function_name = "extend_time"
   role          = aws_iam_role.lambda_role.arn
-  handler       = "extend_time.lambda_handler"
+  handler       = "lambda_function.lambda_handler"
 
   source_code_hash = data.archive_file.extend_time.output_base64sha256
 
   runtime = "python3.11"
+  layers = [ aws_lambda_layer_version.utils_layer.arn ]
   timeout = 30
 
   environment {
@@ -223,7 +231,7 @@ resource "aws_cloudwatch_log_group" "extend_time" {
 #Function to delete on ddb ttl expiration
 data "archive_file" "ddb_delete" {
   type        = "zip"
-  source_dir  = "../lambda/api/"
+  source_dir  = "../lambda/ddb_delete/"
   output_path = ".terraform/zips/ddb_delete.zip"
 }
 
@@ -231,11 +239,12 @@ resource "aws_lambda_function" "ddb_delete" {
   filename      = ".terraform/zips/ddb_delete.zip"
   function_name = "ddb_delete"
   role          = aws_iam_role.lambda_role.arn
-  handler       = "ddb_delete.lambda_handler"
+  handler       = "lambda_function.lambda_handler"
 
   source_code_hash = data.archive_file.ddb_delete.output_base64sha256
 
   runtime = "python3.11"
+  layers = [ aws_lambda_layer_version.utils_layer.arn ]
   timeout = 30
 
   environment {

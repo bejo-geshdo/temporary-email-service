@@ -3,7 +3,7 @@ import json
 
 import boto3
 
-from utils.s3 import check_file_exists
+from s3 import check_file_exists
 
 s3 = boto3.client("s3")
 

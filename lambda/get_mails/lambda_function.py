@@ -6,8 +6,8 @@ import json
 
 import boto3
 
-from utils.check_address import check_active_address
-from utils.get_mail import get_emails_ddb
+from check_address import check_active_address
+from get_mail import get_emails_ddb
 
 table_name = os.environ["TABLE_NAME"]
 
