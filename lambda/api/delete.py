@@ -4,11 +4,10 @@ import json
 import boto3
 
 from utils.delete import delete_address, delete_mail
+from utils.check_address import check_active_address
 
 table_name = os.environ["TABLE_NAME"]
-bucket_name = os.environ["BUCKET_NAME"]
 
-s3 = boto3.client("s3")
 dynamodb = boto3.resource("dynamodb")
 table = dynamodb.Table(table_name)
 
@@ -17,8 +16,12 @@ def lambda_handler(event, context):
     type = event["queryStringParameters"]["type"]
     address = event["queryStringParameters"]["address"]
 
+    if not check_active_address(address, table):
+        return {"statusCode": 404, "body": json.dumps("address not found")}
+
     if type == "address":
-        if delete_address(address, table, s3, bucket_name):
+        # Add check if address exists
+        if delete_address(address, table):
             return {
                 "statusCode": 200,
                 "body": json.dumps(f"successfuly deleted address: {address}"),
@@ -30,7 +33,7 @@ def lambda_handler(event, context):
             }
     elif type == "email":
         sk = event["queryStringParameters"]["sk"]
-        if delete_mail(address, sk, table, s3, bucket_name):
+        if delete_mail(address, sk, table):
             return {
                 "statusCode": 200,
                 "body": json.dumps(
@@ -44,5 +47,3 @@ def lambda_handler(event, context):
             }
     else:
         return {"statusCode": 400, "body": json.dumps("Wrong type")}
-
-    return

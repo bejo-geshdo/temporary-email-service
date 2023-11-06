@@ -25,6 +25,8 @@ resource "aws_dynamodb_table" "inbox_now" {
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "pk"
   range_key    = "sk"
+  stream_enabled  = true
+  stream_view_type = "OLD_IMAGE"
 
   attribute {
     name = "pk"
@@ -36,10 +38,10 @@ resource "aws_dynamodb_table" "inbox_now" {
     type = "S"
   }
 
-  # ttl {
-  #   attribute_name = "ttl"
-  #   enabled        = false #TODO Enable when lambda is set up to trigger on delete
-  # }
+  ttl {
+    attribute_name = "ttl"
+    enabled        = true  
+  }
 
   deletion_protection_enabled = false #TODO Enable
 }

@@ -165,7 +165,6 @@ resource "aws_lambda_function" "delete" {
   environment {
     variables = {
       TABLE_NAME  = aws_dynamodb_table.inbox_now.name
-      BUCKET_NAME = aws_s3_bucket.saved_mails.id
     }
   }
 }
@@ -203,4 +202,47 @@ resource "aws_lambda_function" "extend_time" {
 resource "aws_cloudwatch_log_group" "extend_time" {
   name              = "/aws/lambda/${aws_lambda_function.extend_time.function_name}"
   retention_in_days = 7
+}
+
+#Function to delete on ddb ttl expiration
+data "archive_file" "ddb_delete" {
+  type        = "zip"
+  source_dir  = "../lambda/api/"
+  output_path = ".terraform/zips/ddb_delete.zip"
+}
+
+resource "aws_lambda_function" "ddb_delete" {
+  filename      = ".terraform/zips/ddb_delete.zip"
+  function_name = "ddb_delete"
+  role          = aws_iam_role.lambda_role.arn
+  handler       = "ddb_delete.lambda_handler"
+
+  source_code_hash = data.archive_file.ddb_delete.output_base64sha256
+
+  runtime = "python3.11"
+  timeout = 30
+
+  environment {
+    variables = {
+      TABLE_NAME  = aws_dynamodb_table.inbox_now.name
+      BUCKET_NAME = aws_s3_bucket.saved_mails.id
+    }
+  }
+}
+
+resource "aws_lambda_event_source_mapping" "ddb_delete" {
+  event_source_arn = aws_dynamodb_table.inbox_now.stream_arn
+  function_name = aws_lambda_function.ddb_delete.arn
+  starting_position = "LATEST"
+
+  filter_criteria {
+   filter {
+     pattern = "{ \"eventName\" : [ \"REMOVE\" ] }"
+   }
+ }
+}
+
+resource "aws_cloudwatch_log_group" "ddb_delete" {
+  name              = "/aws/lambda/${aws_lambda_function.ddb_delete.function_name}"
+  retention_in_days = 1
 }
