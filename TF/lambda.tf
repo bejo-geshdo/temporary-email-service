@@ -7,12 +7,12 @@ data "archive_file" "utils_layer" {
 }
 
 resource "aws_lambda_layer_version" "utils_layer" {
-  filename = ".terraform/zips/utils_layer.zip"
+  filename   = ".terraform/zips/utils_layer.zip"
   layer_name = "utils_layer"
 
-  compatible_runtimes = [ "python3.11" ]
-  compatible_architectures = [ "arm64", "x86_64" ]
-  source_code_hash = data.archive_file.utils_layer.output_base64sha256
+  compatible_runtimes      = ["python3.11"]
+  compatible_architectures = ["arm64", "x86_64"]
+  source_code_hash         = data.archive_file.utils_layer.output_base64sha256
 }
 
 # Function to create a new email address
@@ -31,12 +31,12 @@ resource "aws_lambda_function" "create_address" {
   source_code_hash = data.archive_file.create_address.output_base64sha256
 
   runtime = "python3.11"
-  layers = [ aws_lambda_layer_version.utils_layer.arn ]
+  layers  = [aws_lambda_layer_version.utils_layer.arn]
 
   environment {
     variables = {
       TABLE_NAME = aws_dynamodb_table.inbox_now.name
-      DOMAIN = var.email_domain
+      DOMAIN     = var.email_domain
     }
   }
 }
@@ -61,7 +61,7 @@ resource "aws_lambda_function" "save_mail" {
   source_code_hash = data.archive_file.save_mail.output_base64sha256
 
   runtime = "python3.11"
-  layers = [ aws_lambda_layer_version.utils_layer.arn ]
+  layers  = [aws_lambda_layer_version.utils_layer.arn]
 
   environment {
     variables = {
@@ -92,7 +92,7 @@ resource "aws_lambda_function" "check_address" {
   source_code_hash = data.archive_file.check_address.output_base64sha256
 
   runtime = "python3.11"
-  layers = [ aws_lambda_layer_version.utils_layer.arn ]
+  layers  = [aws_lambda_layer_version.utils_layer.arn]
 
   environment {
     variables = {
@@ -122,7 +122,7 @@ resource "aws_lambda_function" "get_mails" {
   source_code_hash = data.archive_file.get_mails.output_base64sha256
 
   runtime = "python3.11"
-  layers = [ aws_lambda_layer_version.utils_layer.arn ]
+  layers  = [aws_lambda_layer_version.utils_layer.arn]
 
   environment {
     variables = {
@@ -152,7 +152,7 @@ resource "aws_lambda_function" "get_singed_url" {
   source_code_hash = data.archive_file.get_singed_url.output_base64sha256
 
   runtime = "python3.11"
-  layers = [ aws_lambda_layer_version.utils_layer.arn ]
+  layers  = [aws_lambda_layer_version.utils_layer.arn]
 
   environment {
     variables = {
@@ -183,11 +183,11 @@ resource "aws_lambda_function" "delete" {
   source_code_hash = data.archive_file.delete.output_base64sha256
 
   runtime = "python3.11"
-  layers = [ aws_lambda_layer_version.utils_layer.arn ]
+  layers  = [aws_lambda_layer_version.utils_layer.arn]
 
   environment {
     variables = {
-      TABLE_NAME  = aws_dynamodb_table.inbox_now.name
+      TABLE_NAME = aws_dynamodb_table.inbox_now.name
     }
   }
 }
@@ -213,12 +213,12 @@ resource "aws_lambda_function" "extend_time" {
   source_code_hash = data.archive_file.extend_time.output_base64sha256
 
   runtime = "python3.11"
-  layers = [ aws_lambda_layer_version.utils_layer.arn ]
+  layers  = [aws_lambda_layer_version.utils_layer.arn]
   timeout = 30
 
   environment {
     variables = {
-      TABLE_NAME  = aws_dynamodb_table.inbox_now.name
+      TABLE_NAME = aws_dynamodb_table.inbox_now.name
     }
   }
 }
@@ -244,7 +244,7 @@ resource "aws_lambda_function" "ddb_delete" {
   source_code_hash = data.archive_file.ddb_delete.output_base64sha256
 
   runtime = "python3.11"
-  layers = [ aws_lambda_layer_version.utils_layer.arn ]
+  layers  = [aws_lambda_layer_version.utils_layer.arn]
   timeout = 30
 
   environment {
@@ -256,15 +256,15 @@ resource "aws_lambda_function" "ddb_delete" {
 }
 
 resource "aws_lambda_event_source_mapping" "ddb_delete" {
-  event_source_arn = aws_dynamodb_table.inbox_now.stream_arn
-  function_name = aws_lambda_function.ddb_delete.arn
+  event_source_arn  = aws_dynamodb_table.inbox_now.stream_arn
+  function_name     = aws_lambda_function.ddb_delete.arn
   starting_position = "LATEST"
 
   filter_criteria {
-   filter {
-     pattern = "{ \"eventName\" : [ \"REMOVE\" ] }"
-   }
- }
+    filter {
+      pattern = "{ \"eventName\" : [ \"REMOVE\" ] }"
+    }
+  }
 }
 
 resource "aws_cloudwatch_log_group" "ddb_delete" {
