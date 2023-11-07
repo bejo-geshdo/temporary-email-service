@@ -6,10 +6,6 @@ resource "aws_ses_domain_dkim" "main" {
   domain = aws_ses_domain_identity.main.domain
 }
 
-output "route53" {
-  value = aws_ses_domain_dkim.main
-}
-
 resource "aws_route53_record" "ses_dkim_record" {
   count   = 3
   zone_id = var.hosted_zone_id
@@ -19,24 +15,31 @@ resource "aws_route53_record" "ses_dkim_record" {
   records = ["${aws_ses_domain_dkim.main.dkim_tokens[count.index]}.dkim.amazonses.com"]
 }
 
+#Takes a few seconds for the ses identity to be verified. Added time_sleep to make sure it's verifed
+resource "time_sleep" "wait_ses_dkim" {
+  depends_on = [aws_route53_record.ses_dkim_record[2]]
+
+  create_duration = "60s"
+}
+
 resource "aws_route53_record" "ses_mx_record" {
   zone_id = var.hosted_zone_id
-  name = var.email_domain
-  type = "MX"
-  ttl = "300"
+  name    = var.email_domain
+  type    = "MX"
+  ttl     = "300"
   records = ["10 inbound-smtp.eu-west-1.amazonaws.com"]
 }
 
 resource "aws_route53_record" "ses_txt_record" {
   zone_id = var.hosted_zone_id
-  name = var.email_domain
-  type = "TXT"
-  ttl = "300"
+  name    = var.email_domain
+  type    = "TXT"
+  ttl     = "300"
   records = ["v=spf1 include:amazonses.com ~all"]
 }
 
 resource "aws_ses_domain_mail_from" "main" {
-  domain = aws_ses_domain_identity.main.domain
+  domain           = aws_ses_domain_identity.main.domain
   mail_from_domain = "bounce.${aws_ses_domain_identity.main.domain}"
 }
 
@@ -54,10 +57,11 @@ resource "aws_route53_record" "ses_from_txt_record" {
   type    = "TXT"
   ttl     = "300"
   records = ["v=spf1 include:amazonses.com -all"]
-} 
+}
 
 resource "aws_ses_receipt_rule_set" "main" {
-  depends_on = [ aws_route53_record.ses_dkim_record, aws_route53_record.ses_mx_record  ]
+  #TODO Wait to create this until Identity has been deployed
+  depends_on    = [time_sleep.wait_ses_dkim, aws_route53_record.ses_mx_record]
   rule_set_name = "main"
 }
 

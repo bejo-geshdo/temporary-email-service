@@ -4,4 +4,8 @@
   "python.analysis.extraPaths": [
     "./lambda/layers/utils/python/lib/python3.11/site-packages"
   ],
+  "[terraform]": {
+    "editor.defaultFormatter": "hashicorp.terraform",
+    "editor.formatOnSave": true
+}
 }

@@ -1,9 +1,9 @@
 variable "email_domain" {
   type = string
-  default = "mail.castrojonsson.se"
+  default = "inboxnow.geshdo.dev"
 }
 
 variable "hosted_zone_id" {
   type = string
-  default = "Z06167743PXL34GPE1XSN"
+  default = "Z04438352J0R4ZPV6Z1PH"
 }

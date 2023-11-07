@@ -74,6 +74,7 @@ module "extend_time" {
 }
 
 resource "aws_api_gateway_deployment" "deploy" {
+  depends_on  = [module.newAddress, module.delete, module.extend_time, module.get_mails, module.get_singed_url]
   rest_api_id = aws_api_gateway_rest_api.api_gw.id
 
   triggers = {
@@ -95,4 +96,5 @@ resource "aws_api_gateway_stage" "dev" {
 output "api_gw_url_prod" {
   value = aws_api_gateway_stage.dev.invoke_url
 }
+
 
