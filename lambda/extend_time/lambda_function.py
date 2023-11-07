@@ -1,17 +1,18 @@
 import os
-import json
-import datetime
 
 import boto3
 
 from date import get_date
 from get_address import get_address
 from get_mail import get_emails_ddb
+from respons import respons, respons_error
 
 table_name = os.environ["TABLE_NAME"]
 
 dynamodb = boto3.resource("dynamodb")
 table = dynamodb.Table(table_name)
+
+FAILED_EXTEND_MSG = "Failed to extend time"
 
 
 def lambda_handler(event, context):
@@ -21,18 +22,27 @@ def lambda_handler(event, context):
     item = get_address(address, table)
 
     if item == False:
-        return {"statusCode": 404, "body": json.dumps("Address not found")}
+        return respons_error(
+            status_code=404,
+            msg=FAILED_EXTEND_MSG,
+            error="Address not found",
+            body={"address": address},
+        )
 
     # Check ttl is not older than 23:50:00
-
     if item["ttl"] > get_date(hours=23, minutes=50):
-        return {"statusCode": 404, "body": json.dumps("To old to renew")}
+        return respons_error(
+            status_code=404,
+            msg=FAILED_EXTEND_MSG,
+            error="To old to renew",
+            body={"address": address, "ttl": item["ttl"]},
+        )
 
     # Set ttl to time +10min for addrress
     new_ttl = get_date(minutes=10)
 
     try:
-        respons = table.update_item(
+        res = table.update_item(
             Key={"pk": address, "sk": "address#active"},
             UpdateExpression="set #t=:ttl",
             ExpressionAttributeValues={":ttl": new_ttl},
@@ -41,10 +51,16 @@ def lambda_handler(event, context):
 
     except Exception as Error:
         print(Error)
-        return {"statusCode": 500, "body": json.dumps("Error updating time on address")}
+        return respons_error(
+            status_code=500,
+            msg=FAILED_EXTEND_MSG,
+            error=Error,  # TODO don't return full error
+            body={"address": address},
+        )
 
     # Batch set ttl for all mail for address to +10min
-    # TODO remove this and delete items when the address is deleted (trigged via ddb delete event)
+    # This does not extend ttl of items in S3
+    # Items in S3 should not be able to live longer than 24h
     try:
         email_items = get_emails_ddb(address, table)
 
@@ -56,18 +72,17 @@ def lambda_handler(event, context):
             )
 
     except Exception as error:
+        # TODO handel this better
         print(error)
-        return {
-            "statusCode": 200,
-            "body": json.dumps("Updated address TTL, failed to update email"),
-        }
+        return respons_error(
+            status_code=200,
+            msg="Successfully extend time for address. Failed to extend emails!",
+            error=Error,  # TODO don't return full error
+            body={"address": address, "ttl": new_ttl},
+        )
 
-    # This does not extend ttl of items in S3
-    # Items in S3 should not be able to live longer than 24h
-
-    return {
-        "statusCode": 200,
-        "body": json.dumps(
-            f"Successfully updated address and email TTL. New date: {datetime.datetime.utcfromtimestamp(new_ttl)}"
-        ),
-    }
+    return respons(
+        status_code=200,
+        msg="Successfully extend time for address and emails!",
+        body={"address": address, "ttl": new_ttl},
+    )

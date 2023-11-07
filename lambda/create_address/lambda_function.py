@@ -1,11 +1,11 @@
 import os
-import json
 
 import boto3
 
-from date import get_date_plus_10_min, get_date_now
+from date import get_date
 from util import generate_new_address
 from check_address import check_active_address, check_inactive_address
+from respons import respons, respons_error
 
 table_name = os.environ["TABLE_NAME"]
 domain = os.environ["DOMAIN"]
@@ -21,20 +21,26 @@ def lambda_handler(event, context):
     if check_active_address(new_address, table) or check_inactive_address(
         new_address, table
     ):
-        return {"statusCode": 400, "body": json.dumps("address exists")}
+        return respons_error(
+            status_code=400,
+            msg="failed to create address",
+            error="Address alredy exists",
+            body={"address": new_address},
+        )
 
     new_address_item = {
         "pk": new_address,
         "sk": "address#active",
-        "created_at": get_date_now(),
-        "ttl": get_date_plus_10_min(),
+        "created_at": get_date(),
+        "ttl": get_date(minutes=10),
         "domain": new_address.split("@")[1],
         "email": new_address,
     }
 
-    put_item = table.put_item(Item=new_address_item)
+    table.put_item(Item=new_address_item)
 
-    return {
-        "statusCode": 200,
-        "body": json.dumps(f"Created new email address: {new_address}"),
-    }
+    return respons(
+        status_code=200,
+        msg="Successfully created a new address",
+        body={"address": new_address, "ttl": new_address_item["ttl"]},
+    )
