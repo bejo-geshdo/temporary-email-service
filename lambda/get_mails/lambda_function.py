@@ -23,7 +23,9 @@ def lambda_handler(event, context):
     if check_active_address(email_address, table):
         try:
             items = get_emails_ddb(email_address, table)
-            return respons(status_code=200, msg="Returning users emils", body=items)
+            return respons(
+                status_code=200, msg="Returning users emails", body={"emails": items}
+            )
             return {"statusCode": 200, "body": json.dumps(items, default=str)}
         except Exception as error:
             print(error)

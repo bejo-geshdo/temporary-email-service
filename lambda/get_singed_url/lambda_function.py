@@ -21,7 +21,9 @@ def lambda_handler(event, context):
                 Params={"Bucket": bucket_name, "Key": message_id},
                 ExpiresIn=300,
             )
-            return respons(status_code=200, msg="Success generating URL", body=url)
+            return respons(
+                status_code=200, msg="Success generating URL", body={"url": url}
+            )
             return {"statusCode": 200, "body": json.dumps(url)}
         except Exception as error:
             print(error)

@@ -32,7 +32,7 @@ def lambda_handler(event, context):
     # Check ttl is not older than 23:50:00
     if item["ttl"] > get_date(hours=23, minutes=50):
         return respons_error(
-            status_code=404,
+            status_code=400,
             msg=FAILED_EXTEND_MSG,
             error="To old to renew",
             body={"address": address, "ttl": item["ttl"]},
