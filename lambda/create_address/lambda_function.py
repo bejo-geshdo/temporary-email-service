@@ -15,6 +15,15 @@ table = dynamodb.Table(table_name)
 
 
 def lambda_handler(event, context):
+    # if not event["body"]["secret"]:
+    #     return respons_error(
+    #         status_code=400,
+    #         msg="failed to create address",
+    #         error="Missing client secret",
+    #     )
+    # secret = event["body"]["secret"]
+    # TODO Implement store secret hash in DB. Verify secret in every call user makes
+    # TODO Send in a public key used to encypt incomming emails and store them in S3
     new_address = generate_new_address(domain)
 
     # TODO add retry logic if address exists
