@@ -20,6 +20,17 @@ resource "aws_s3_bucket" "saved_mails" {
   force_destroy = true
 }
 
+resource "aws_s3_bucket_cors_configuration" "s3_cors" {
+  bucket = aws_s3_bucket.saved_mails.id
+
+  cors_rule {
+    allowed_headers = ["*"]
+    allowed_methods = ["PUT", "POST", "GET"]
+    allowed_origins = ["*"]
+    max_age_seconds = 3000
+  }
+}
+
 resource "aws_dynamodb_table" "inbox_now" {
   name             = "inbox_now"
   billing_mode     = "PAY_PER_REQUEST"

@@ -1,0 +1,10 @@
+.Timer{
+  text-align: center;
+  color: rgb(23, 3, 3);
+  font-size: 3rem; /* Increase the font size to make it larger */
+  padding: 20px; /* Adjust the size of the square background */
+  border-radius: 10px; /* Add rounded corners */
+  background-color: rgb(212, 49, 158);
+  background-size: 60% 60%; /* Resize the background image */
+  background-position: left; /* Adjust the position of the background image */
+}
