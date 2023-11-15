@@ -31,7 +31,7 @@ resource "aws_api_gateway_integration" "options_integration" {
   depends_on  = [aws_api_gateway_method.options_method]
 
   request_templates = { "application/json" = <<EOF
-  {"statusCode": 200}
+{"statusCode": 200}
   EOF
   }
 }
