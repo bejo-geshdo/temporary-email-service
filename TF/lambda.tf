@@ -15,6 +15,21 @@ resource "aws_lambda_layer_version" "utils_layer" {
   source_code_hash         = data.archive_file.utils_layer.output_base64sha256
 }
 
+data "archive_file" "requirements_layer" {
+  type        = "zip"
+  source_dir  = "../lambda/layers/requirements"
+  output_path = ".terraform/zips/requirements_layer.zip"
+}
+
+resource "aws_lambda_layer_version" "requirements_layer" {
+  filename   = ".terraform/zips/requirements_layer.zip"
+  layer_name = "requirements_layer"
+
+  compatible_runtimes      = ["python3.11"]
+  compatible_architectures = ["x86_64"]
+  source_code_hash         = data.archive_file.requirements_layer.output_base64sha256
+}
+
 # Function to create a new email address
 data "archive_file" "create_address" {
   type        = "zip"
@@ -30,8 +45,11 @@ resource "aws_lambda_function" "create_address" {
 
   source_code_hash = data.archive_file.create_address.output_base64sha256
 
-  runtime = "python3.11"
-  layers  = [aws_lambda_layer_version.utils_layer.arn]
+  runtime       = "python3.11"
+  layers        = [aws_lambda_layer_version.utils_layer.arn, aws_lambda_layer_version.requirements_layer.arn]
+  architectures = ["x86_64"]
+  timeout       = 30
+  memory_size   = 512
 
   environment {
     variables = {
@@ -212,9 +230,11 @@ resource "aws_lambda_function" "extend_time" {
 
   source_code_hash = data.archive_file.extend_time.output_base64sha256
 
-  runtime = "python3.11"
-  layers  = [aws_lambda_layer_version.utils_layer.arn]
-  timeout = 30
+  runtime       = "python3.11"
+  layers        = [aws_lambda_layer_version.utils_layer.arn, aws_lambda_layer_version.requirements_layer.arn]
+  architectures = ["x86_64"]
+  timeout       = 30
+  memory_size   = 1024
 
   environment {
     variables = {

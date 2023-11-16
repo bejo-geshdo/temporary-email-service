@@ -12,7 +12,7 @@ module "newAddress" {
 
   methods = [
     {
-      method        = "GET"
+      method        = "POST"
       authorization = "NONE"
       lambda        = aws_lambda_function.create_address
     },

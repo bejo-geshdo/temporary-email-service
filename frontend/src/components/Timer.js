@@ -9,9 +9,16 @@ const Timer = () => {
   const [seconds, setSeconds] = useState(0);
 
   const apiUrl = "https://c4y7ide9r8.execute-api.eu-west-1.amazonaws.com/dev/";
+  //TODO Change secret to randomized and store in state
+  const secret = "password123";
 
   useEffect(() => {
-    fetch(`${apiUrl}newAddress`)
+    const requestOptions = {
+      method: "POST",
+      body: JSON.stringify({ secret: secret }),
+    };
+
+    fetch(`${apiUrl}newAddress`, requestOptions)
       .then((response) => response.json())
       .then((data) => {
         setAddress(data);

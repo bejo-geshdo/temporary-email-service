@@ -5,7 +5,8 @@
   },
 
   "python.analysis.extraPaths": [
-    "./lambda/layers/utils/python/lib/python3.11/site-packages"
+    "./lambda/layers/utils/python/lib/python3.11/site-packages",
+    "./lambda/layers/requirements/python/lib/python3.11/site-packages"
   ],
   "[terraform]": {
     "editor.defaultFormatter": "hashicorp.terraform",

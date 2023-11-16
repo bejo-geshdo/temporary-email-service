@@ -4,23 +4,33 @@ info:
   description: "My test API from TF"
   version: "2023-11-07T09:05:13Z"
 servers:
-- url: "https://c4y7ide9r8.execute-api.eu-west-1.amazonaws.com/{basePath}"
-  variables:
-    basePath:
-      default: "dev"
+  - url: "https://c4y7ide9r8.execute-api.eu-west-1.amazonaws.com/{basePath}"
+    variables:
+      basePath:
+        default: "dev"
 paths:
-
   /newAddress:
-    get:
+    post:
       description: "Creates a new email address with a 10 minute ttl"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                secret:
+                  type: string
+                  example: "juiefkjwq2wa89u2"
+                  description: A long string of alphanumeric character
       responses:
-        '200':
+        "200":
           description: "Successfully created a new address"
           headers:
             Content-Type:
-              $ref: '#/components/headers/Content-Type'
+              $ref: "#/components/headers/Content-Type"
             Access-Control-Allow-Origin:
-              $ref: '#/components/headers/Access-Control-Allow-Origin'
+              $ref: "#/components/headers/Access-Control-Allow-Origin"
           content:
             application/json:
               schema:
@@ -36,13 +46,13 @@ paths:
                     type: integer
                     format: int64
                     example: "1699363102"
-        '400':
+        "400":
           description: "Failed to create address"
           headers:
             Content-Type:
-              $ref: '#/components/headers/Content-Type'
+              $ref: "#/components/headers/Content-Type"
             Access-Control-Allow-Origin:
-              $ref: '#/components/headers/Access-Control-Allow-Origin'
+              $ref: "#/components/headers/Access-Control-Allow-Origin"
           content:
             application/json:
               schema:
@@ -67,22 +77,22 @@ paths:
 
   /getMails:
     get:
-     description: "Gets a list with meta data of all users emails"
-     parameters:
-       - name: email
-         in: query
-         required: true
-         schema:
-          type: string
-          example: "asdf@inboxnow@stepstone.com"
-     responses:
-        '200':
+      description: "Gets a list with meta data of all users emails"
+      parameters:
+        - name: email
+          in: query
+          required: true
+          schema:
+            type: string
+            example: "asdf@inboxnow@stepstone.com"
+      responses:
+        "200":
           description: "Success returning users emails"
           headers:
             Content-Type:
-              $ref: '#/components/headers/Content-Type'
+              $ref: "#/components/headers/Content-Type"
             Access-Control-Allow-Origin:
-              $ref: '#/components/headers/Access-Control-Allow-Origin'
+              $ref: "#/components/headers/Access-Control-Allow-Origin"
           content:
             application/json:
               schema:
@@ -142,13 +152,13 @@ paths:
                         domain:
                           type: string
                           example: "inboxnow.geshdo.dev"
-        '404':
+        "404":
           description: "Address not found"
           headers:
             Content-Type:
-              $ref: '#/components/headers/Content-Type'
+              $ref: "#/components/headers/Content-Type"
             Access-Control-Allow-Origin:
-              $ref: '#/components/headers/Access-Control-Allow-Origin'
+              $ref: "#/components/headers/Access-Control-Allow-Origin"
           content:
             application/json:
               schema:
@@ -160,13 +170,13 @@ paths:
                   error:
                     type: string
                     example: "Address not found"
-        '500':
+        "500":
           description: "Internal server error"
           headers:
             Content-Type:
-              $ref: '#/components/headers/Content-Type'
+              $ref: "#/components/headers/Content-Type"
             Access-Control-Allow-Origin:
-              $ref: '#/components/headers/Access-Control-Allow-Origin'
+              $ref: "#/components/headers/Access-Control-Allow-Origin"
           content:
             application/json:
               schema:
@@ -184,7 +194,7 @@ paths:
           uri: "arn:aws:apigateway:eu-west-1:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-1:833095292836:function:get_mails/invocations"
           passthroughBehavior: "when_no_match"
           timeoutInMillis: 29000
-        
+
   /getSingedUrls:
     get:
       description: "Get's a signed URL to download the email file from S3"
@@ -196,13 +206,13 @@ paths:
             type: string
             example: "evclsie2e3ebp9bo1u14iugbfieik2vcime0ocg1"
       responses:
-        '200':
+        "200":
           description: "Success generating URL"
           headers:
             Content-Type:
-              $ref: '#/components/headers/Content-Type'
+              $ref: "#/components/headers/Content-Type"
             Access-Control-Allow-Origin:
-              $ref: '#/components/headers/Access-Control-Allow-Origin'
+              $ref: "#/components/headers/Access-Control-Allow-Origin"
           content:
             application/json:
               schema:
@@ -214,13 +224,13 @@ paths:
                   url:
                     type: string
                     example: "https.//s3.eu-west-1.amazonaws.com/bucket-name/asdf123?AWSAccessKeyId=asmkl29&x-amz-security=bmk20&Expires=1699434929"
-        '404':
+        "404":
           description: "Email not found"
           headers:
             Content-Type:
-              $ref: '#/components/headers/Content-Type'
+              $ref: "#/components/headers/Content-Type"
             Access-Control-Allow-Origin:
-              $ref: '#/components/headers/Access-Control-Allow-Origin'
+              $ref: "#/components/headers/Access-Control-Allow-Origin"
           content:
             application/json:
               schema:
@@ -232,13 +242,13 @@ paths:
                   error:
                     type: string
                     example: "Email not found"
-        '500':
+        "500":
           description: "Internal server error"
           headers:
             Content-Type:
-              $ref: '#/components/headers/Content-Type'
+              $ref: "#/components/headers/Content-Type"
             Access-Control-Allow-Origin:
-              $ref: '#/components/headers/Access-Control-Allow-Origin'
+              $ref: "#/components/headers/Access-Control-Allow-Origin"
           content:
             application/json:
               schema:
@@ -256,25 +266,37 @@ paths:
         uri: "arn:aws:apigateway:eu-west-1:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-1:833095292836:function:get_singed_url/invocations"
         passthroughBehavior: "when_no_match"
         timeoutInMillis: 29000
-        
+
   /extendTime:
     put:
       description: "Used to extend the time of an address and all emails by 10 minutes"
-      parameters:
-      - name: address
-        in: query
+      requestBody:
         required: true
-        schema:
-          type: string
-        example: "asdf@inboxnow.geshdo.dev"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                secret:
+                  type: string
+                  example: "juiefkjwq2wa89u2"
+                  description: A long string of alphanumeric character
+
+      parameters:
+        - name: address
+          in: query
+          required: true
+          schema:
+            type: string
+          example: "asdf@inboxnow.geshdo.dev"
       responses:
-        '200':
+        "200":
           description: "Successful extension of time for address and emails."
           headers:
             Content-Type:
-              $ref: '#/components/headers/Content-Type'
+              $ref: "#/components/headers/Content-Type"
             Access-Control-Allow-Origin:
-              $ref: '#/components/headers/Access-Control-Allow-Origin'
+              $ref: "#/components/headers/Access-Control-Allow-Origin"
           content:
             application/json:
               schema:
@@ -290,13 +312,13 @@ paths:
                     type: integer
                     format: int64
                     example: "1699363102"
-        '500':
+        "500":
           description: "Failed to extend time."
           headers:
             Content-Type:
-              $ref: '#/components/headers/Content-Type'
+              $ref: "#/components/headers/Content-Type"
             Access-Control-Allow-Origin:
-              $ref: '#/components/headers/Access-Control-Allow-Origin'
+              $ref: "#/components/headers/Access-Control-Allow-Origin"
           content:
             application/json:
               schema:
@@ -311,13 +333,13 @@ paths:
                   address:
                     type: string
                     example: "asdf@inboxnow.geshdo.dev"
-        '400':
+        "400":
           description: "Failed to extend time due to being too old to renew."
           headers:
             Content-Type:
-              $ref: '#/components/headers/Content-Type'
+              $ref: "#/components/headers/Content-Type"
             Access-Control-Allow-Origin:
-              $ref: '#/components/headers/Access-Control-Allow-Origin'
+              $ref: "#/components/headers/Access-Control-Allow-Origin"
           content:
             application/json:
               schema:
@@ -336,52 +358,52 @@ paths:
                     type: integer
                     format: int64
                     example: "1699363102"
-        '404':
+        "404":
           description: "Not Found."
           headers:
             Content-Type:
-              $ref: '#/components/headers/Content-Type'
+              $ref: "#/components/headers/Content-Type"
             Access-Control-Allow-Origin:
-              $ref: '#/components/headers/Access-Control-Allow-Origin'
+              $ref: "#/components/headers/Access-Control-Allow-Origin"
       x-amazon-apigateway-integration:
-          type: "aws_proxy"
-          httpMethod: "POST"
-          uri: "arn:aws:apigateway:eu-west-1:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-1:833095292836:function:extend_time/invocations"
-          passthroughBehavior: "when_no_match"
-          timeoutInMillis: 29000
-        
+        type: "aws_proxy"
+        httpMethod: "POST"
+        uri: "arn:aws:apigateway:eu-west-1:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-1:833095292836:function:extend_time/invocations"
+        passthroughBehavior: "when_no_match"
+        timeoutInMillis: 29000
+
   /delete:
     delete:
       description: "Used to delete an Address and all emails or one email before expiration"
       parameters:
-      - name: address
-        in: query
-        required: true
-        schema:
-          type: string
-        example: "asdf@inboxnow.geshdo.dev"
-      - name: type
-        in: query
-        required: true
-        schema:
-          type: string
-          enum: ["address", "email"]
-      - name: sk
-        in: query
-        required: false
-        description: "Required when type is 'email'"
-        schema:
-          type: string
-        example: "mail#5d66fb70-0bb0-4823-b59d-9a2530a8c2ee"
+        - name: address
+          in: query
+          required: true
+          schema:
+            type: string
+          example: "asdf@inboxnow.geshdo.dev"
+        - name: type
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: ["address", "email"]
+        - name: sk
+          in: query
+          required: false
+          description: "Required when type is 'email'"
+          schema:
+            type: string
+          example: "mail#5d66fb70-0bb0-4823-b59d-9a2530a8c2ee"
 
       responses:
-        '200':
+        "200":
           description: "Successful delation of address or email"
           headers:
             Content-Type:
-              $ref: '#/components/headers/Content-Type'
+              $ref: "#/components/headers/Content-Type"
             Access-Control-Allow-Origin:
-              $ref: '#/components/headers/Access-Control-Allow-Origin'
+              $ref: "#/components/headers/Access-Control-Allow-Origin"
           content:
             application/json:
               schema:
@@ -393,13 +415,13 @@ paths:
                   address:
                     type: string
                     example: "asdf@inboxnow.geshdo.dev"
-        '400':
+        "400":
           description: "Wrong or missing type"
           headers:
             Content-Type:
-              $ref: '#/components/headers/Content-Type'
+              $ref: "#/components/headers/Content-Type"
             Access-Control-Allow-Origin:
-              $ref: '#/components/headers/Access-Control-Allow-Origin'
+              $ref: "#/components/headers/Access-Control-Allow-Origin"
           content:
             application/json:
               schema:
@@ -411,13 +433,13 @@ paths:
                   error:
                     type: string
                     example: "Wrong or missing type"
-        '500':
+        "500":
           description: "Failed delete"
           headers:
             Content-Type:
-              $ref: '#/components/headers/Content-Type'
+              $ref: "#/components/headers/Content-Type"
             Access-Control-Allow-Origin:
-              $ref: '#/components/headers/Access-Control-Allow-Origin'
+              $ref: "#/components/headers/Access-Control-Allow-Origin"
           content:
             application/json:
               schema:
@@ -441,12 +463,12 @@ paths:
         timeoutInMillis: 29000
 
 components:
- headers:
-   Content-Type:
-     schema:
-       type: string
-       example: "application/json"
-   Access-Control-Allow-Origin:
-     schema:
-       type: string
-       example: "*"
+  headers:
+    Content-Type:
+      schema:
+        type: string
+        example: "application/json"
+    Access-Control-Allow-Origin:
+      schema:
+        type: string
+        example: "*"
