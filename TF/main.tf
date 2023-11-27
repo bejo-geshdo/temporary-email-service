@@ -10,7 +10,7 @@ terraform {
 # Configure the AWS Provider
 provider "aws" {
   region  = "eu-west-1"
-  profile = "inboxnow"
+  profile = var.aws_profile_name
 }
 
 data "aws_caller_identity" "current" {}
