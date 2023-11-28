@@ -1,9 +1,10 @@
 # Lambda Layers
 
 data "archive_file" "utils_layer" {
-  type        = "zip"
-  source_dir  = "../lambda/layers/utils/"
-  output_path = ".terraform/zips/utils_layer.zip"
+  type             = "zip"
+  source_dir       = "../lambda/layers/utils/"
+  output_file_mode = "0664"
+  output_path      = ".terraform/zips/utils_layer.zip"
 }
 
 resource "aws_lambda_layer_version" "utils_layer" {
@@ -16,9 +17,10 @@ resource "aws_lambda_layer_version" "utils_layer" {
 }
 
 data "archive_file" "requirements_layer" {
-  type        = "zip"
-  source_dir  = "../lambda/layers/requirements"
-  output_path = ".terraform/zips/requirements_layer.zip"
+  type             = "zip"
+  source_dir       = "../lambda/layers/requirements"
+  output_file_mode = "0664"
+  output_path      = ".terraform/zips/requirements_layer.zip"
 }
 
 resource "aws_lambda_layer_version" "requirements_layer" {
@@ -32,9 +34,10 @@ resource "aws_lambda_layer_version" "requirements_layer" {
 
 # Function to create a new email address
 data "archive_file" "create_address" {
-  type        = "zip"
-  source_dir  = "../lambda/create_address/"
-  output_path = ".terraform/zips/create_address.zip"
+  type             = "zip"
+  source_dir       = "../lambda/create_address/"
+  output_file_mode = "0664"
+  output_path      = ".terraform/zips/create_address.zip"
 }
 
 resource "aws_lambda_function" "create_address" {
@@ -66,9 +69,10 @@ resource "aws_cloudwatch_log_group" "create_address" {
 
 # Function to recive, scan and save emails from SES to S3
 data "archive_file" "save_mail" {
-  type        = "zip"
-  source_dir  = "../lambda/save_mail/"
-  output_path = ".terraform/zips/save_mail.zip"
+  type             = "zip"
+  source_dir       = "../lambda/save_mail/"
+  output_file_mode = "0664"
+  output_path      = ".terraform/zips/save_mail.zip"
 }
 resource "aws_lambda_function" "save_mail" {
   filename      = ".terraform/zips/save_mail.zip"
@@ -96,9 +100,10 @@ resource "aws_cloudwatch_log_group" "save_mail" {
 
 # Function to check if a email address exists and is active
 data "archive_file" "check_address" {
-  type        = "zip"
-  source_dir  = "../lambda/check_address/"
-  output_path = ".terraform/zips/check_address.zip"
+  type             = "zip"
+  source_dir       = "../lambda/check_address/"
+  output_file_mode = "0664"
+  output_path      = ".terraform/zips/check_address.zip"
 }
 
 resource "aws_lambda_function" "check_address" {
@@ -126,9 +131,10 @@ resource "aws_cloudwatch_log_group" "check_address" {
 
 #Function to get emails for an address
 data "archive_file" "get_mails" {
-  type        = "zip"
-  source_dir  = "../lambda/get_mails/"
-  output_path = ".terraform/zips/get_mails.zip"
+  type             = "zip"
+  source_dir       = "../lambda/get_mails/"
+  output_file_mode = "0664"
+  output_path      = ".terraform/zips/get_mails.zip"
 }
 
 resource "aws_lambda_function" "get_mails" {
@@ -156,9 +162,10 @@ resource "aws_cloudwatch_log_group" "get_mails" {
 
 #Function to create signed S3 URLs to download emails
 data "archive_file" "get_singed_url" {
-  type        = "zip"
-  source_dir  = "../lambda/get_singed_url/"
-  output_path = ".terraform/zips/get_singed_url.zip"
+  type             = "zip"
+  source_dir       = "../lambda/get_singed_url/"
+  output_file_mode = "0664"
+  output_path      = ".terraform/zips/get_singed_url.zip"
 }
 
 resource "aws_lambda_function" "get_singed_url" {
@@ -187,9 +194,10 @@ resource "aws_cloudwatch_log_group" "get_singed_url" {
 
 #Function to delete address and emails
 data "archive_file" "delete" {
-  type        = "zip"
-  source_dir  = "../lambda/delete/"
-  output_path = ".terraform/zips/delete.zip"
+  type             = "zip"
+  source_dir       = "../lambda/delete/"
+  output_file_mode = "0664"
+  output_path      = ".terraform/zips/delete.zip"
 }
 
 resource "aws_lambda_function" "delete" {
@@ -217,9 +225,10 @@ resource "aws_cloudwatch_log_group" "delete" {
 
 #Function to extend address time
 data "archive_file" "extend_time" {
-  type        = "zip"
-  source_dir  = "../lambda/extend_time/"
-  output_path = ".terraform/zips/extend_time.zip"
+  type             = "zip"
+  source_dir       = "../lambda/extend_time/"
+  output_file_mode = "0664"
+  output_path      = ".terraform/zips/extend_time.zip"
 }
 
 resource "aws_lambda_function" "extend_time" {
@@ -250,9 +259,10 @@ resource "aws_cloudwatch_log_group" "extend_time" {
 
 #Function to delete on ddb ttl expiration
 data "archive_file" "ddb_delete" {
-  type        = "zip"
-  source_dir  = "../lambda/ddb_delete/"
-  output_path = ".terraform/zips/ddb_delete.zip"
+  type             = "zip"
+  source_dir       = "../lambda/ddb_delete/"
+  output_file_mode = "0644"
+  output_path      = ".terraform/zips/ddb_delete.zip"
 }
 
 resource "aws_lambda_function" "ddb_delete" {

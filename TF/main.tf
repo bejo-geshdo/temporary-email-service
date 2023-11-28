@@ -10,14 +10,12 @@ terraform {
     bucket = "tf-state-833095292836"
     region = "eu-west-1"
     key    = "state"
-    #profile = "inboxnow"
   }
 }
 
 # Configure the AWS Provider
 provider "aws" {
   region = "eu-west-1"
-  #profile = var.aws_profile_name
 }
 
 data "aws_caller_identity" "current" {}
