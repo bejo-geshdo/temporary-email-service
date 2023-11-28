@@ -14,9 +14,9 @@ data "archive_file" "utils_layer" {
 
 resource "aws_s3_object" "utils_layer" {
   bucket = aws_s3_bucket.lambda_zips_s3.bucket
-  key    = "utils_layer-${filemd5(".terraform/zips/utils_layer.zip")}.zip"
-  source = ".terraform/zips/utils_layer.zip"
-  etag   = filemd5(".terraform/zips/utils_layer.zip")
+  key    = "utils_layer-${data.archive_file.utils_layer.output_md5}.zip"
+  source = data.archive_file.utils_layer.output_path
+  etag   = filemd5(data.archive_file.utils_layer.output_path)
 }
 
 resource "aws_lambda_layer_version" "utils_layer" {
@@ -27,7 +27,7 @@ resource "aws_lambda_layer_version" "utils_layer" {
 
   compatible_runtimes      = ["python3.11"]
   compatible_architectures = ["arm64", "x86_64"]
-  source_code_hash         = data.archive_file.utils_layer.output_base64sha256
+  #source_code_hash         = data.archive_file.utils_layer.output_base64sha256
 }
 
 data "archive_file" "requirements_layer" {
@@ -38,7 +38,7 @@ data "archive_file" "requirements_layer" {
 }
 
 resource "aws_lambda_layer_version" "requirements_layer" {
-  filename   = ".terraform/zips/requirements_layer.zip"
+  filename   = data.archive_file.requirements_layer.output_path
   layer_name = "requirements_layer"
 
   compatible_runtimes      = ["python3.11"]
