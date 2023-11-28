@@ -1,3 +1,8 @@
+resource "aws_s3_bucket" "lambda_zips_s3" {
+  bucket        = "${var.email_domain}-lambda-zips"
+  force_destroy = true
+}
+
 # Lambda Layers
 
 data "archive_file" "utils_layer" {
@@ -7,8 +12,17 @@ data "archive_file" "utils_layer" {
   output_path      = ".terraform/zips/utils_layer.zip"
 }
 
+resource "aws_s3_object" "utils_layer" {
+  bucket = aws_s3_bucket.lambda_zips_s3.bucket
+  key    = "utils_layer-${filemd5(".terraform/zips/utils_layer.zip")}.zip"
+  source = ".terraform/zips/utils_layer.zip"
+  etag   = filemd5(".terraform/zips/utils_layer.zip")
+}
+
 resource "aws_lambda_layer_version" "utils_layer" {
-  filename   = ".terraform/zips/utils_layer.zip"
+  #filename   = ".terraform/zips/utils_layer.zip"
+  s3_bucket  = aws_s3_object.utils_layer.bucket
+  s3_key     = aws_s3_object.utils_layer.key
   layer_name = "utils_layer"
 
   compatible_runtimes      = ["python3.11"]
