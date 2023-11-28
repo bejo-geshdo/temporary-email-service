@@ -328,3 +328,11 @@ resource "aws_cloudwatch_log_group" "ddb_delete" {
   name              = "/aws/lambda/${aws_lambda_function.ddb_delete.function_name}"
   retention_in_days = 1
 }
+
+output "utils_hash" {
+  value = data.archive_file.utils_layer.output_base64sha256
+}
+
+output "create_address_hash" {
+  value = data.archive_file.create_address.output_base64sha256
+}
