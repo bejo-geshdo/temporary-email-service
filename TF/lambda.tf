@@ -13,27 +13,23 @@ data "archive_file" "utils_layer" {
 }
 
 locals {
-  folder_files = fileset("../lambda/layers/utils", "*")
-  folder_hash  = sha256(join("", [for f in local.folder_files : filesha256("../lambda/layers/utils/${f}")]))
+  utils_layer_folder_hash = sha256(join("", [for f in fileset("../lambda/layers/utils", "*") : filesha256("../lambda/layers/utils/${f}")]))
 }
-
 
 resource "aws_s3_object" "utils_layer" {
   bucket = aws_s3_bucket.lambda_zips_s3.bucket
-  key    = "utils_layer-${local.folder_hash}.zip"
+  #Need to calculate hash from files in folder insted to zip becuse we get diffrent hash on zip when running CI/CD
+  key    = "utils_layer-${local.utils_layer_folder_hash}.zip"
   source = data.archive_file.utils_layer.output_path
-  #etag   = filemd5(data.archive_file.utils_layer.output_path)
 }
 
 resource "aws_lambda_layer_version" "utils_layer" {
-  #filename   = ".terraform/zips/utils_layer.zip"
   s3_bucket  = aws_s3_object.utils_layer.bucket
   s3_key     = aws_s3_object.utils_layer.key
   layer_name = "utils_layer"
 
   compatible_runtimes      = ["python3.11"]
   compatible_architectures = ["arm64", "x86_64"]
-  #source_code_hash         = data.archive_file.utils_layer.output_base64sha256
 }
 
 data "archive_file" "requirements_layer" {
@@ -43,13 +39,24 @@ data "archive_file" "requirements_layer" {
   output_path      = ".terraform/zips/requirements_layer.zip"
 }
 
+locals {
+  requirements_layer_folder_hash = sha256(join("", [for f in fileset("../lambda/layers/requirements", "*") : filesha256("../lambda/layers/requirements/${f}")]))
+}
+
+resource "aws_s3_object" "requirements_layer" {
+  bucket = aws_s3_bucket.lambda_zips_s3.bucket
+  #Need to calculate hash from files in folder insted to zip becuse we get diffrent hash on zip when running CI/CD
+  key    = "requirements_layer-${local.requirements_layer_folder_hash}.zip"
+  source = data.archive_file.requirements_layer.output_path
+}
+
 resource "aws_lambda_layer_version" "requirements_layer" {
-  filename   = data.archive_file.requirements_layer.output_path
+  s3_bucket  = aws_s3_object.requirements_layer.bucket
+  s3_key     = aws_s3_object.requirements_layer.key
   layer_name = "requirements_layer"
 
   compatible_runtimes      = ["python3.11"]
   compatible_architectures = ["x86_64"]
-  source_code_hash         = data.archive_file.requirements_layer.output_base64sha256
 }
 
 # Function to create a new email address
