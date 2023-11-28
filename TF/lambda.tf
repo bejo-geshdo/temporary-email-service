@@ -12,11 +12,17 @@ data "archive_file" "utils_layer" {
   output_path      = ".terraform/zips/utils_layer.zip"
 }
 
+locals {
+  folder_files = fileset("../lambda/layers/utils", "*")
+  folder_hash  = sha256(join("", [for f in local.folder_files : filesha256("../lambda/layers/utils/${f}")]))
+}
+
+
 resource "aws_s3_object" "utils_layer" {
   bucket = aws_s3_bucket.lambda_zips_s3.bucket
-  key    = "utils_layer-${data.archive_file.utils_layer.output_md5}.zip"
+  key    = "utils_layer-${local.folder_hash}.zip"
   source = data.archive_file.utils_layer.output_path
-  etag   = filemd5(data.archive_file.utils_layer.output_path)
+  #etag   = filemd5(data.archive_file.utils_layer.output_path)
 }
 
 resource "aws_lambda_layer_version" "utils_layer" {
