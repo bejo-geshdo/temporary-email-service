@@ -8,7 +8,7 @@ resource "aws_s3_bucket" "lambda_zips_s3" {
 data "archive_file" "utils_layer" {
   type             = "zip"
   source_dir       = "../lambda/layers/utils/"
-  output_file_mode = "0664"
+  output_file_mode = "0666"
   output_path      = ".terraform/zips/utils_layer.zip"
 }
 
@@ -35,7 +35,7 @@ resource "aws_lambda_layer_version" "utils_layer" {
 data "archive_file" "requirements_layer" {
   type             = "zip"
   source_dir       = "../lambda/layers/requirements"
-  output_file_mode = "0664"
+  output_file_mode = "0666"
   output_path      = ".terraform/zips/requirements_layer.zip"
 }
 
