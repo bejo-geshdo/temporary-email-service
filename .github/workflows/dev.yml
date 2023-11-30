@@ -32,12 +32,12 @@ jobs:
         with:
           terraform_version: 1.6.4
 
-      - name: Terraform Workspace
-        working-directory: ./TF
-        run: terraform workspace select -or-create ${{ env.ENV_NAME }}
       - name: Terraform Init
         working-directory: ./TF
         run: terraform init
+      - name: Terraform Workspace
+        working-directory: ./TF
+        run: terraform workspace select -or-create ${{ env.ENV_NAME }}
       - name: Terraform Format
         working-directory: ./TF
         run: terraform fmt -check
