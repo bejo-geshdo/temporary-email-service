@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "lambda_zips_s3" {
-  bucket        = "${var.email_domain}-lambda-zips"
+  bucket        = "${var.email_domain}-lambda-zips-${var.env}"
   force_destroy = true
 }
 
@@ -26,7 +26,7 @@ resource "aws_s3_object" "utils_layer" {
 resource "aws_lambda_layer_version" "utils_layer" {
   s3_bucket  = aws_s3_object.utils_layer.bucket
   s3_key     = aws_s3_object.utils_layer.key
-  layer_name = "utils_layer"
+  layer_name = "utils_layer-${var.env}"
 
   compatible_runtimes      = ["python3.11"]
   compatible_architectures = ["arm64", "x86_64"]
@@ -53,7 +53,7 @@ resource "aws_s3_object" "requirements_layer" {
 resource "aws_lambda_layer_version" "requirements_layer" {
   s3_bucket  = aws_s3_object.requirements_layer.bucket
   s3_key     = aws_s3_object.requirements_layer.key
-  layer_name = "requirements_layer"
+  layer_name = "requirements_layer-${var.env}"
 
   compatible_runtimes      = ["python3.11"]
   compatible_architectures = ["x86_64"]
@@ -68,8 +68,8 @@ data "archive_file" "create_address" {
 }
 
 resource "aws_lambda_function" "create_address" {
-  filename      = ".terraform/zips/create_address.zip"
-  function_name = "create_address"
+  filename      = data.archive_file.create_address.output_path
+  function_name = "create_address-${var.env}"
   role          = aws_iam_role.lambda_role.arn
   handler       = "lambda_function.lambda_handler"
 
@@ -102,8 +102,8 @@ data "archive_file" "save_mail" {
   output_path      = ".terraform/zips/save_mail.zip"
 }
 resource "aws_lambda_function" "save_mail" {
-  filename      = ".terraform/zips/save_mail.zip"
-  function_name = "save_mail"
+  filename      = data.archive_file.save_mail.output_path
+  function_name = "save_mail-${var.env}"
   role          = aws_iam_role.lambda_role.arn
   handler       = "lambda_function.lambda_handler"
 
@@ -134,8 +134,8 @@ data "archive_file" "check_address" {
 }
 
 resource "aws_lambda_function" "check_address" {
-  filename      = ".terraform/zips/check_address.zip"
-  function_name = "check_address"
+  filename      = data.archive_file.check_address.output_path
+  function_name = "check_address-${var.env}"
   role          = aws_iam_role.lambda_role.arn
   handler       = "lambda_function.lambda_handler"
 
@@ -165,8 +165,8 @@ data "archive_file" "get_mails" {
 }
 
 resource "aws_lambda_function" "get_mails" {
-  filename      = ".terraform/zips/get_mails.zip"
-  function_name = "get_mails"
+  filename      = data.archive_file.get_mails.output_path
+  function_name = "get_mails-${var.env}"
   role          = aws_iam_role.lambda_role.arn
   handler       = "lambda_function.lambda_handler"
 
@@ -196,8 +196,8 @@ data "archive_file" "get_singed_url" {
 }
 
 resource "aws_lambda_function" "get_singed_url" {
-  filename      = ".terraform/zips/get_singed_url.zip"
-  function_name = "get_singed_url"
+  filename      = data.archive_file.get_singed_url.output_path
+  function_name = "get_singed_url-${var.env}"
   role          = aws_iam_role.lambda_role.arn
   handler       = "lambda_function.lambda_handler"
 
@@ -228,8 +228,8 @@ data "archive_file" "delete" {
 }
 
 resource "aws_lambda_function" "delete" {
-  filename      = ".terraform/zips/delete.zip"
-  function_name = "delete"
+  filename      = data.archive_file.delete.output_path
+  function_name = "delete-${var.env}"
   role          = aws_iam_role.lambda_role.arn
   handler       = "lambda_function.lambda_handler"
 
@@ -259,8 +259,8 @@ data "archive_file" "extend_time" {
 }
 
 resource "aws_lambda_function" "extend_time" {
-  filename      = ".terraform/zips/extend_time.zip"
-  function_name = "extend_time"
+  filename      = data.archive_file.extend_time.output_path
+  function_name = "extend_time-${var.env}"
   role          = aws_iam_role.lambda_role.arn
   handler       = "lambda_function.lambda_handler"
 
@@ -293,8 +293,8 @@ data "archive_file" "ddb_delete" {
 }
 
 resource "aws_lambda_function" "ddb_delete" {
-  filename      = ".terraform/zips/ddb_delete.zip"
-  function_name = "ddb_delete"
+  filename      = data.archive_file.ddb_delete.output_path
+  function_name = "ddb_delete-${var.env}"
   role          = aws_iam_role.lambda_role.arn
   handler       = "lambda_function.lambda_handler"
 
@@ -327,12 +327,4 @@ resource "aws_lambda_event_source_mapping" "ddb_delete" {
 resource "aws_cloudwatch_log_group" "ddb_delete" {
   name              = "/aws/lambda/${aws_lambda_function.ddb_delete.function_name}"
   retention_in_days = 1
-}
-
-output "utils_hash" {
-  value = data.archive_file.utils_layer.output_base64sha256
-}
-
-output "create_address_hash" {
-  value = data.archive_file.create_address.output_base64sha256
 }

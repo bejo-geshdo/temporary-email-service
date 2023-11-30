@@ -1,5 +1,5 @@
 resource "aws_api_gateway_rest_api" "api_gw" {
-  name        = "test"
+  name        = "test-${var.env}"
   description = "My test API from TF"
 }
 
@@ -95,7 +95,7 @@ resource "aws_api_gateway_stage" "dev" {
 }
 
 
-output "api_gw_url_prod" {
+output "api_gw_url" {
   value = aws_api_gateway_stage.dev.invoke_url
 }
 

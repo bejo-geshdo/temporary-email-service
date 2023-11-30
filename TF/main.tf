@@ -21,7 +21,7 @@ provider "aws" {
 data "aws_caller_identity" "current" {}
 
 resource "aws_s3_bucket" "saved_mails" {
-  bucket        = "${var.email_domain}-ses"
+  bucket        = "${var.email_domain}-ses-${var.env}"
   force_destroy = true
 }
 
@@ -37,7 +37,7 @@ resource "aws_s3_bucket_cors_configuration" "s3_cors" {
 }
 
 resource "aws_dynamodb_table" "inbox_now" {
-  name             = "inbox_now"
+  name             = "inbox_now-${var.env}"
   billing_mode     = "PAY_PER_REQUEST"
   hash_key         = "pk"
   range_key        = "sk"

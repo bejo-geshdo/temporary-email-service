@@ -75,7 +75,7 @@ resource "aws_lambda_permission" "allow_ses_check_address" {
 
 resource "aws_ses_receipt_rule" "check_address" {
   depends_on    = [aws_lambda_permission.allow_ses_check_address]
-  name          = "check_address"
+  name          = "check_address-${var.env}"
   rule_set_name = aws_ses_receipt_rule_set.main.rule_set_name
 
   recipients   = [var.email_domain]
@@ -144,7 +144,7 @@ resource "aws_s3_bucket_policy" "reports" {
 
 resource "aws_ses_receipt_rule" "s3" {
   depends_on    = [aws_lambda_permission.allow_ses_save_mail, aws_s3_bucket_policy.reports]
-  name          = "s3"
+  name          = "s3-${var.env}"
   rule_set_name = aws_ses_receipt_rule_set.main.rule_set_name
   after         = aws_ses_receipt_rule.check_address.name
 
