@@ -48,5 +48,5 @@ jobs:
           # On push to "main", deploy the Terraform infrastructure
       - name: Terraform Apply
         working-directory: ./TF
-        if: github.ref == 'refs/heads/dev' && github.event_name == 'push'
+        if: github.ref == 'refs/heads/main'
         run: terraform apply -var-file=$ENV_NAME.tfvars -auto-approve -input=false
