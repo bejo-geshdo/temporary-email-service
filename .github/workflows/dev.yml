@@ -1,9 +1,9 @@
-name: Update Infra
+name: Update dev Infra
 
 on:
   push:
     branches:
-      - main
+      - dev
 
 permissions:
   id-token: write
@@ -12,6 +12,7 @@ permissions:
 env:
   AWS_DEFAULT_REGION: eu-central-1
   credentials-account: arn:aws:iam::833095292836:role/Github-Terraform
+  ENV_NAME: dev
 
 jobs:
   deploy:
@@ -34,15 +35,18 @@ jobs:
       - name: Terraform Init
         working-directory: ./TF
         run: terraform init
+      - name: Terraform Workspace
+        working-directory: ./TF
+        run: terraform workspace select -or-create ${{ env.ENV_NAME }}
       - name: Terraform Format
         working-directory: ./TF
         run: terraform fmt -check
       - name: Terraform Plan
         working-directory: ./TF
         run:
-          terraform plan -input=false
+          terraform plan -var-file=${{ env.ENV_NAME }}.tfvars -input=false
           # On push to "main", deploy the Terraform infrastructure
       - name: Terraform Apply
         working-directory: ./TF
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: terraform apply -auto-approve -input=false
+        if: github.ref == 'refs/heads/dev' && github.event_name == 'push'
+        run: terraform apply -var-file=${{ env.ENV_NAME }}.tfvars -auto-approve -input=false

@@ -1,5 +1,5 @@
 resource "aws_iam_role" "lambda_role" {
-  name = "lambda_role"
+  name = "lambda_role-${var.env}"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
@@ -16,7 +16,7 @@ resource "aws_iam_role" "lambda_role" {
 }
 
 resource "aws_iam_policy" "dynamodb_full_access" {
-  name        = "dynamodb_full_access"
+  name        = "dynamodb_full_access-${var.env}"
   description = "Provides full access to DynamoDB"
 
   policy = jsonencode({
@@ -32,7 +32,7 @@ resource "aws_iam_policy" "dynamodb_full_access" {
 }
 
 resource "aws_iam_policy" "ses_full_access" {
-  name        = "ses_full_access"
+  name        = "ses_full_access-${var.env}"
   description = "Provides full access to SES"
 
   policy = jsonencode({
@@ -48,7 +48,7 @@ resource "aws_iam_policy" "ses_full_access" {
 }
 
 resource "aws_iam_policy" "ses_s3_access" {
-  name        = "ses_s3_access"
+  name        = "ses_s3_access-${var.env}"
   description = "Provides access to the bucket with mails"
 
   policy = jsonencode({
@@ -64,7 +64,7 @@ resource "aws_iam_policy" "ses_s3_access" {
 }
 
 resource "aws_iam_policy" "lambda_logs" {
-  name        = "lambda_logs"
+  name        = "lambda_logs-${var.env}"
   description = "Allows functions to write logs to CloudWatch Logs"
 
   policy = jsonencode({
