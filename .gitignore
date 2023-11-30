@@ -4,6 +4,8 @@ node_moduels
 
 temp
 .DS_Store
+!lambda/**/.DS_Store
+!lambda/layers/**/.DS_Store
 
 # Local .terraform directories
 **/.terraform/*

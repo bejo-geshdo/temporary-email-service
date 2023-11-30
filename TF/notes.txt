@@ -1,0 +1,38 @@
+commit 1:
+Deploy a new test_requirements_layer and test_create_address function_name
+output the hash of all 
+
+commit 2:
+Removed layers and function only keeping archive_files
+
+Hash for req layer changed but not for create_address
+output size for req layer also changed
+
+commit 3: 
+moved req_layer outside layers folder
+Added utils layer
+
+All 3 hashs change
+
+commit 3:
+Added empty folders to create_address
+
+create_address remained the same!!!!!!
+
+commit 4:
+Changed name of folder2 to folder2.1
+
+create_address remained the same!!!!!!
+
+commit 5:
+Added a new folder "test_folder". It contains both the files from utils and create_address
+
+test folder also changes
+Tested depolying from linux and got same hash as github
+
+commit 6:
+exclueds ds_store
+layer size 6038(4625)
+
+commit 7:
+Commiting all .ds_store in the lambda folder
