@@ -12,7 +12,7 @@ permissions:
 env:
   AWS_DEFAULT_REGION: eu-central-1
   credentials-account: arn:aws:iam::833095292836:role/Github-Terraform
-  env: dev
+  ENV_NAME: dev
 
 jobs:
   deploy:
@@ -34,7 +34,7 @@ jobs:
 
       - name: Terraform Workspace
         working-directory: ./TF
-        run: terraform workspace select -or-create $ENV_NAME
+        run: terraform workspace select -or-create ${{ env.ENV_NAME }}
       - name: Terraform Init
         working-directory: ./TF
         run: terraform init
@@ -44,9 +44,9 @@ jobs:
       - name: Terraform Plan
         working-directory: ./TF
         run:
-          terraform plan -var-file=$ENV_NAME.tfvars -input=false
+          terraform plan -var-file=${{ env.ENV_NAME }}.tfvars -input=false
           # On push to "main", deploy the Terraform infrastructure
       - name: Terraform Apply
         working-directory: ./TF
         if: github.ref == 'refs/heads/dev' && github.event_name == 'push'
-        run: terraform apply -var-file=$ENV_NAME.tfvars -auto-approve -input=false
+        run: terraform apply -var-file=${{ env.ENV_NAME }}.tfvars -auto-approve -input=false
