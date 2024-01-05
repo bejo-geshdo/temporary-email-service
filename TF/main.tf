@@ -18,6 +18,11 @@ provider "aws" {
   region = "eu-west-1"
 }
 
+provider "aws" {
+  region = "us-east-1"
+  alias  = "us_east_1"
+}
+
 data "aws_caller_identity" "current" {}
 
 resource "aws_s3_bucket" "saved_mails" {
