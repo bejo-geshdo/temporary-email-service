@@ -8,7 +8,7 @@ const Timer = () => {
   const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(0);
 
-  const apiUrl = "https://c4y7ide9r8.execute-api.eu-west-1.amazonaws.com/dev/";
+  const apiUrl = "https://api.dev.inboxdev.castrojonsson.se/";
   //TODO Change secret to randomized and store in state
   const secret = "password123";
 
