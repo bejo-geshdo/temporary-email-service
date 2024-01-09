@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./Timer.css";
 
 const Timer = () => {
@@ -8,9 +8,23 @@ const Timer = () => {
   const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(0);
 
+  const intervalRef = useRef();
+
+  // Set apiUrl to be websites url but with api. in front
   const apiUrl = "https://api.dev.inboxdev.castrojonsson.se/";
   //TODO Change secret to randomized and store in state
   const secret = "password123";
+
+  const newAddress = async (requestOptions) => {
+    fetch(`${apiUrl}newAddress`, requestOptions)
+      .then((response) => response.json())
+      .then((data) => {
+        localStorage.setItem("address", JSON.stringify(data));
+        setAddress(data);
+        setLoading(false);
+        console.log(data);
+      });
+  };
 
   useEffect(() => {
     const requestOptions = {
@@ -18,13 +32,13 @@ const Timer = () => {
       body: JSON.stringify({ secret: secret }),
     };
 
-    fetch(`${apiUrl}newAddress`, requestOptions)
-      .then((response) => response.json())
-      .then((data) => {
-        setAddress(data);
-        setLoading(false);
-        console.log(data);
-      });
+    const savedAddress = localStorage.getItem("address");
+    if (savedAddress) {
+      setAddress(JSON.parse(savedAddress));
+      setLoading(false);
+    } else {
+      newAddress(requestOptions);
+    }
   }, []);
 
   const extendTime = async () => {
@@ -48,6 +62,7 @@ const Timer = () => {
       `${apiUrl}delete?address=${address.address}&type=email&sk=${sk}`,
       requestOptions
     );
+    res.status === 200 ? console.log("deleted") : console.log("error");
     //TODO remove email from state
     await handleClick();
   };
@@ -57,10 +72,17 @@ const Timer = () => {
       method: "DELETE",
     };
 
-    const res = await fetch(
+    await fetch(
       `${apiUrl}delete?address=${address.address}&type=address`,
       requestOptions
     );
+
+    const requestOptions2 = {
+      method: "POST",
+      body: JSON.stringify({ secret: secret }),
+    };
+    setLoading(true);
+    newAddress(requestOptions2);
   };
 
   const downloadEmail = async (messageId) => {
@@ -91,13 +113,26 @@ const Timer = () => {
 
   //TODO state is weird idk how to use it :(
   useEffect(() => {
-    setInterval(async () => {
+    // Clear any existing interval
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+
+    // Set up a new interval
+    intervalRef.current = setInterval(async () => {
       if (address) {
         console.log("running");
         console.log(`${address.address}`);
         await handleClick();
       }
     }, 5000);
+
+    // Clean up on unmount or when address changes
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
   }, [address]);
 
   useEffect(() => {
@@ -148,17 +183,22 @@ const Timer = () => {
           </div>
         </>
       )}
-      {emails.length < 1 ? (
+      {emails?.length < 1 ? (
         <h2>No Emails yet</h2>
       ) : (
         <div>
-          <p>There are {emails.length} emails</p>
-          {emails.map((email) => {
+          <p>There are {emails?.length} emails</p>
+          {emails?.map((email) => {
             return (
-              <div key={email.ttl}>
-                <h2>{email.subject}</h2>
-                <p>Time: {email.created_at}</p>
-                <p>From: {email.from}</p>
+              <div key={email.ttl} className="Email">
+                <h2>{email?.subject ? email.subject : "No subject"}</h2>
+                <p>
+                  <strong>Time:</strong>{" "}
+                  {new Date(email.ttl * 1000).toLocaleString()}
+                </p>
+                <p>
+                  <strong>From:</strong> {email.from}
+                </p>
                 <button onClick={() => deleteMail(email.sk)}>
                   Delete mail
                 </button>
