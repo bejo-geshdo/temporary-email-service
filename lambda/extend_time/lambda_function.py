@@ -71,9 +71,9 @@ def lambda_handler(event, context):
                 ExpressionAttributeValues={":ttl": new_ttl},
             )
 
-    except Exception as error:
+    except Exception as Error:
         # TODO handel this better
-        print(error)
+        print(Error)
         return respons_error(
             status_code=200,
             msg="Successfully extend time for address. Failed to extend emails!",
