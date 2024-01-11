@@ -4,7 +4,7 @@ info:
   description: "My test API from TF"
   version: "2023-11-07T09:05:13Z"
 servers:
-  - url: "https://c4y7ide9r8.execute-api.eu-west-1.amazonaws.com/{basePath}"
+  - url: "https://api.dev.inboxdev.castrojonsson.se/{basePath}"
     variables:
       basePath:
         default: "dev"

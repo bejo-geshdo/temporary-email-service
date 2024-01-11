@@ -10,8 +10,9 @@ const Timer = () => {
 
   const intervalRef = useRef();
 
-  // Set apiUrl to be websites url but with api. in front
-  const apiUrl = "https://api.dev.inboxdev.castrojonsson.se/";
+  const apiUrl = process.env.REACT_APP_API_URL
+    ? process.env.REACT_APP_API_URL
+    : "https://api.dev.inboxdev.castrojonsson.se/";
   //TODO Change secret to randomized and store in state
   const secret = "password123";
 
@@ -33,11 +34,11 @@ const Timer = () => {
     };
 
     const savedAddress = localStorage.getItem("address");
-    if (savedAddress) {
+    if (!savedAddress || !JSON.parse(savedAddress)) {
+      newAddress(requestOptions);
+    } else {
       setAddress(JSON.parse(savedAddress));
       setLoading(false);
-    } else {
-      newAddress(requestOptions);
     }
   }, []);
 
@@ -64,7 +65,7 @@ const Timer = () => {
     );
     res.status === 200 ? console.log("deleted") : console.log("error");
     //TODO remove email from state
-    await handleClick();
+    await getEmails();
   };
 
   const deleteAddress = async () => {
@@ -102,7 +103,7 @@ const Timer = () => {
     a.remove();
   };
 
-  const handleClick = async () => {
+  const getEmails = async () => {
     const res = await fetch(`${apiUrl}getMails?email=${address.address}`).then(
       (response) => response.json()
     );
@@ -120,10 +121,10 @@ const Timer = () => {
 
     // Set up a new interval
     intervalRef.current = setInterval(async () => {
-      if (address) {
+      if (address?.ttl > Math.floor(Date.now() / 1000)) {
         console.log("running");
         console.log(`${address.address}`);
-        await handleClick();
+        await getEmails();
       }
     }, 5000);
 
@@ -136,7 +137,10 @@ const Timer = () => {
   }, [address]);
 
   useEffect(() => {
-    if (address && address.ttl) {
+    if (address?.ttl < Math.floor(Date.now() / 1000)) {
+      setMinutes(0);
+      setSeconds(0);
+    } else {
       const remainingTime = address?.ttl - Math.floor(Date.now() / 1000);
       const minutes = Math.floor(remainingTime / 60);
       const seconds = remainingTime % 60;
@@ -167,20 +171,34 @@ const Timer = () => {
         <p>Loading...</p>
       ) : (
         <>
-          <p>TTL: {address?.ttl}</p>
-          <button onClick={() => extendTime()}>
-            Extend time by 10 minutes
-          </button>
+          <p>
+            <strong>Address expiration:</strong>
+            {new Date(address?.ttl * 1000).toLocaleString()}
+          </p>
+          <p>
+            <strong>TTL:</strong> {address?.ttl}
+          </p>
+          <p>
+            <strong>Address:</strong> {address.address}
+          </p>
           <button onClick={() => deleteAddress()}>
             Delete email address: {address.address}
           </button>
-          <p>Address: {address.address}</p>
           <div className="Timer">
             {minutes}:{seconds}
           </div>
-          <div>
-            <button onClick={() => handleClick()}>Get Emails</button>
-          </div>
+          {address?.ttl > Math.floor(Date.now() / 1000) ? (
+            <>
+              <button onClick={() => extendTime()}>
+                Extend time by 10 minutes
+              </button>
+              <div>
+                <button onClick={() => getEmails()}>Get Emails</button>
+              </div>
+            </>
+          ) : (
+            <></>
+          )}
         </>
       )}
       {emails?.length < 1 ? (
