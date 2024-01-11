@@ -66,7 +66,7 @@ The infrastructure is managed by Terraform
 
 Comming soon diagram of database
 
-![SVG Image](https://raw.githubusercontent.com/bejo-geshdo/temporary-email-service/534875f0de1ba5d9daa1127790e51e2ee3b063f9/infra.drawio.svg?token=AYTI3I2JLDJPJVA5QVQAKFLFT67T4)
+![SVG Image](https://www.dev.inboxdev.castrojonsson.se/infra.drawio.svg)
 
 ## Improvments
 
