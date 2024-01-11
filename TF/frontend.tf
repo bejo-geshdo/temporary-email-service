@@ -5,6 +5,8 @@ locals {
 # --- S3 ---
 resource "aws_s3_bucket" "frontend_bucket" {
   bucket = "${var.name}-${var.env}-frontend-${var.aws_account_id}"
+
+  force_destroy = true
 }
 
 data "aws_iam_policy_document" "allow_access_from_cloud_front" {
@@ -137,4 +139,6 @@ resource "aws_route53_record" "cloud_front" {
   records = [aws_cloudfront_distribution.cloud_front.domain_name]
 }
 
-
+output "frontend_s3bucket" {
+  value = aws_s3_bucket.frontend_bucket.id
+}
