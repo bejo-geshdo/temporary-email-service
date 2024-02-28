@@ -1,8 +1,12 @@
-//import { useState } from "react";
 import "./App.css";
+import { EmailClient } from "./containers/EmailClient";
 
 function App() {
-  return <></>;
+  return (
+    <>
+      <EmailClient />
+    </>
+  );
 }
 
 export default App;
