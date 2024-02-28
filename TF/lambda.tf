@@ -111,11 +111,13 @@ resource "aws_lambda_function" "save_mail" {
 
   runtime = "python3.11"
   layers  = [aws_lambda_layer_version.utils_layer.arn]
+  timeout = 10
 
   environment {
     variables = {
       TABLE_NAME  = aws_dynamodb_table.inbox_now.name
       BUCKET_NAME = aws_s3_bucket.saved_mails.id
+      API_URL  = "https${trimprefix(aws_apigatewayv2_api.ws_api_gw.api_endpoint, "wss")}/${aws_apigatewayv2_stage.stage.name}"
     }
   }
 }
@@ -326,5 +328,68 @@ resource "aws_lambda_event_source_mapping" "ddb_delete" {
 
 resource "aws_cloudwatch_log_group" "ddb_delete" {
   name              = "/aws/lambda/${aws_lambda_function.ddb_delete.function_name}"
+  retention_in_days = 1
+}
+
+
+#Function to connect to websocket
+data "archive_file" "ws_connect" {
+  type             = "zip"
+  source_dir       = "../lambda/webSocket/connect"
+  output_file_mode = "0644"
+  output_path      = ".terraform/zips/ws_connect.zip"
+}
+
+resource "aws_lambda_function" "ws_connect" {
+  filename      = data.archive_file.ws_connect.output_path
+  function_name = "ws_connect-${var.env}"
+  role          = aws_iam_role.lambda_role.arn
+  handler       = "lambda_function.lambda_handler"
+
+  source_code_hash = data.archive_file.ws_connect.output_base64sha256
+
+  runtime = "python3.11"
+  timeout = 3
+
+  environment {
+    variables = {
+      TABLE_NAME  = aws_dynamodb_table.inbox_now.name
+    }
+  }
+}
+
+resource "aws_cloudwatch_log_group" "ws_connect" {
+  name              = "/aws/lambda/${aws_lambda_function.ws_connect.function_name}"
+  retention_in_days = 1
+}
+
+#Function to disconnect to websocket
+data "archive_file" "ws_disconnect" {
+  type             = "zip"
+  source_dir       = "../lambda/webSocket/disconnect"
+  output_file_mode = "0644"
+  output_path      = ".terraform/zips/ws_disconnect.zip"
+}
+
+resource "aws_lambda_function" "ws_disconnect" {
+  filename      = data.archive_file.ws_disconnect.output_path
+  function_name = "ws_disconnect-${var.env}"
+  role          = aws_iam_role.lambda_role.arn
+  handler       = "lambda_function.lambda_handler"
+
+  source_code_hash = data.archive_file.ws_disconnect.output_base64sha256
+
+  runtime = "python3.11"
+  timeout = 3
+
+  environment {
+    variables = {
+      TABLE_NAME  = aws_dynamodb_table.inbox_now.name
+    }
+  }
+}
+
+resource "aws_cloudwatch_log_group" "ws_disconnect" {
+  name              = "/aws/lambda/${aws_lambda_function.ws_disconnect.function_name}"
   retention_in_days = 1
 }

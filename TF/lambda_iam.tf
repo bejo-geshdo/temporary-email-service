@@ -82,6 +82,22 @@ resource "aws_iam_policy" "lambda_logs" {
   })
 }
 
+resource "aws_iam_policy" "apigw_send" {
+  name        = "apigw_send-${var.env}"
+  description = "Allows to post messages to API GW WS"
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect   = "Allow",
+        Action   = ["execute-api:ManageConnections", "execute-api:Invoke"],
+        Resource = "*",
+      },
+    ],
+  })
+}
+
 resource "aws_iam_role_policy_attachment" "lambda_dynamodb_full_access" {
   role       = aws_iam_role.lambda_role.name
   policy_arn = aws_iam_policy.dynamodb_full_access.arn
@@ -100,4 +116,9 @@ resource "aws_iam_role_policy_attachment" "lambda_basic" {
 resource "aws_iam_role_policy_attachment" "ses_s3" {
   role       = aws_iam_role.lambda_role.name
   policy_arn = aws_iam_policy.ses_s3_access.arn
+}
+
+resource "aws_iam_role_policy_attachment" "apigw_send" {
+  role       = aws_iam_role.lambda_role.name
+  policy_arn = aws_iam_policy.apigw_send.arn
 }

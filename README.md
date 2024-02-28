@@ -91,3 +91,8 @@ Things that can be improved about the app:
 - Rewrite frontend
 
 ### Infra
+
+- Multiregion with fail over.
+  - Will probly use DNS both to health checks
+  - Replicate DDB
+  - How do we make sure SES have the correct records?

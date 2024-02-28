@@ -6,9 +6,11 @@
 
 import os
 import re
+import json
 from uuid import uuid4
 
 import boto3
+from boto3.dynamodb.conditions import Key
 
 from check_address import check_active_address
 from date import get_date_plus_10_min, get_date_now
@@ -16,11 +18,15 @@ from ses_email import parse_email
 
 table_name = os.environ["TABLE_NAME"]
 bucket_name = os.environ["BUCKET_NAME"]
+ws_url = os.environ["API_URL"]
 
 dynamodb = boto3.resource("dynamodb")
 s3 = boto3.client("s3")
+apiGW = boto3.client("apigatewaymanagementapi", endpoint_url=ws_url)
 
 table = dynamodb.Table(table_name)
+
+print(ws_url)
 
 
 def lambda_handler(event, context):
@@ -63,6 +69,25 @@ def lambda_handler(event, context):
             except Exception as error:
                 # Add some kind of retry logic
                 print("Failed to add mail item for " + recipient)
+                print(error)
+
+            # Logic to handel the websockets
+            try:
+                query = table.query(
+                    KeyConditionExpression=Key("pk").eq(recipient)
+                    & Key("sk").begins_with("connectionId#")
+                )
+
+                for item in query["Items"]:
+                    connection_id = item["sk"].split("#")[1]
+                    # TODO Send id of mail item or mail item itself?
+                    apiGW.post_to_connection(
+                        Data=json.dumps(mail_item),
+                        ConnectionId=connection_id,
+                    )
+
+            except Exception as error:
+                print("Failed to send messages to websockers to" + recipient)
                 print(error)
 
     return {"disposition": "CONTINUE"}
