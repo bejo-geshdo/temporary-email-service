@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 
 import newAddress from "../utils/newAddress";
 import deleteAddress from "../utils/deleteAddress";
+import extendTime from "../utils/extendTime";
 import CountDown from "../components/CountDown";
-import DeleteAddress from "../components/DeleteAddress";
 
 // const apiUrl = process.env.REACT_APP_API_URL
 //   ? process.env.REACT_APP_API_URL
@@ -26,8 +26,6 @@ export const EmailClient = () => {
     ttl: 0,
   });
   // const [emails, setEmails] = useState([]);
-  // const [minutes, setMinutes] = useState(0);
-  // const [seconds, setSeconds] = useState(0);
 
   useEffect(() => {
     const savedAddress = localStorage.getItem("address");
@@ -54,6 +52,13 @@ export const EmailClient = () => {
     });
   };
 
+  const handleExtendTime = async (address: string, apiUrl: string) => {
+    extendTime(apiUrl, address, secret).then((data) => {
+      localStorage.setItem("address", JSON.stringify(data));
+      setAddress(data);
+    });
+  };
+
   return (
     <div>
       <h1>Temporary serverless email experiment</h1>
@@ -73,11 +78,12 @@ export const EmailClient = () => {
       ) : (
         <>
           <p>{address.address}</p>
-          <DeleteAddress
-            address={address.address}
-            apiUrl={apiUrl}
-            deleteAddress={handleDeleteAddress}
-          />
+          <button onClick={() => handleDeleteAddress(address.address, apiUrl)}>
+            Delete Address: {address.address}
+          </button>
+          <button onClick={() => handleExtendTime(address.address, apiUrl)}>
+            Extend time by 10 minutes
+          </button>
           <CountDown ttl={address.ttl} />
         </>
       )}
