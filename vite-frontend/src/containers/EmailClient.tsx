@@ -4,6 +4,7 @@ import newAddress from "../utils/newAddress";
 import deleteAddress from "../utils/deleteAddress";
 import extendTime from "../utils/extendTime";
 import CountDown from "../components/CountDown";
+import getEmails from "../utils/getEmails";
 
 // const apiUrl = process.env.REACT_APP_API_URL
 //   ? process.env.REACT_APP_API_URL
@@ -12,9 +13,30 @@ const apiUrl = "https://mxpd0fy4ji.execute-api.eu-west-1.amazonaws.com/dev/";
 const secret = "password123";
 //TODO Change secret to randomized and store in state
 
+type EmailAddress = string;
+
 export interface Address {
   msg: string;
   address: string;
+  ttl: number;
+}
+
+export interface Email {
+  subject: string;
+  from: string; //Name + address like "John Doe <john.doe@test.com>
+  from_address: EmailAddress;
+  email: EmailAddress; //should be renamed to "to"
+  teaster: string;
+  domain: string;
+  created_at: number;
+  //Metadata
+  messageId: string;
+  spamVerdict: string;
+  virusVerdict: string;
+  to: EmailAddress[]; //A list of email addresses that the email was sent to
+  //DB fields
+  sk: string;
+  pk: string | EmailAddress;
   ttl: number;
 }
 
@@ -25,7 +47,7 @@ export const EmailClient = () => {
     address: "",
     ttl: 0,
   });
-  // const [emails, setEmails] = useState([]);
+  const [emails, setEmails] = useState<Email[]>([]);
 
   useEffect(() => {
     const savedAddress = localStorage.getItem("address");
@@ -59,6 +81,13 @@ export const EmailClient = () => {
     });
   };
 
+  const handleGetEmails = async (address: string, apiUrl: string) => {
+    getEmails(address, apiUrl).then((data) => {
+      setEmails(data);
+      console.log(emails);
+    });
+  };
+
   return (
     <div>
       <h1>Temporary serverless email experiment</h1>
@@ -85,6 +114,9 @@ export const EmailClient = () => {
             Extend time by 10 minutes
           </button>
           <CountDown ttl={address.ttl} />
+          <button onClick={() => handleGetEmails(address.address, apiUrl)}>
+            Get Emails
+          </button>
         </>
       )}
     </div>
