@@ -5,6 +5,7 @@ import deleteAddress from "../utils/deleteAddress";
 import extendTime from "../utils/extendTime";
 import CountDown from "../components/CountDown";
 import getEmails from "../utils/getEmails";
+import DisplayEmails from "../components/DisplayEmails";
 
 // const apiUrl = process.env.REACT_APP_API_URL
 //   ? process.env.REACT_APP_API_URL
@@ -117,6 +118,7 @@ export const EmailClient = () => {
           <button onClick={() => handleGetEmails(address.address, apiUrl)}>
             Get Emails
           </button>
+          <DisplayEmails apiUrl={apiUrl} emails={emails} />
         </>
       )}
     </div>

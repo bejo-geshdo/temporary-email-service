@@ -10,8 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "base64-js": "^1.5.1",
+    "letterparser": "^0.1.4",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-letter": "^0.4.0"
   },
   "devDependencies": {
     "@types/node": "^20.11.22",
