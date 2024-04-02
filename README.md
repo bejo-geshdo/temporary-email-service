@@ -11,7 +11,7 @@ The frontend can be accessed on: https://www.dev.inboxdev.castrojonsson.se/
 
 The API can be accessed on: https://dev.inboxdev.castrojonsson.se/
 
-Swagger/Open API documentation is avalible on: https://www.dev.inboxdev.castrojonsson.se/docs
+~~Swagger/Open API documentation is avalible on: https://www.dev.inboxdev.castrojonsson.se/docs~~
 
 ## Deploying to AWS
 
@@ -89,5 +89,6 @@ Things that can be improved about the app:
 - Generate uniqe passwords for addresses
 
 - Rewrite frontend
+  - See `frontend/vite` branch
 
 ### Infra
