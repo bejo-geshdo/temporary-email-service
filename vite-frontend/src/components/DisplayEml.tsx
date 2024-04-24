@@ -26,6 +26,8 @@ const DisplayEml: React.FC<DisplayEmlProps> = ({ apiUrl, messageId }) => {
   if (!email || email === null) return <div>Loading...</div>;
 
   return (
+    // Add some info to the top of the email about the email
+    // From name and email address, date, subject, and any other relevant info
     <Letter
       html={email?.html ? email?.html : ""}
       text={email?.text}

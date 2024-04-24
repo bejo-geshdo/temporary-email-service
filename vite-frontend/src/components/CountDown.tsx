@@ -44,7 +44,7 @@ const CountDown = ({ ttl }: CountDownProps) => {
 
   return (
     <div>
-      <h1>Countdown</h1>
+      <h2>Countdown</h2>
       <p>
         {time.minutes < 10 ? `0${time.minutes}` : time.minutes}:
         {time.seconds < 10 ? `0${time.seconds}` : time.seconds}

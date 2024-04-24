@@ -19,9 +19,10 @@ const DisplayEmails = ({ apiUrl, emails }: DisplayEmailsProps) => {
   return (
     <>
       <h2>Emails</h2>
-      <p>There are {emails.length} emails</p>
+
       <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <div style={{}}>
+        <div style={{ border: "2px solid black" }}>
+          <p>There are {emails.length} emails</p>
           {emails.map((email) => (
             <div
               style={{
@@ -30,7 +31,13 @@ const DisplayEmails = ({ apiUrl, emails }: DisplayEmailsProps) => {
                 padding: "5px",
               }}
             >
-              <h3>{email.subject ? email.subject : "No subject"}</h3>
+              <p>
+                {email.subject
+                  ? email.subject.length < 20
+                    ? email.subject
+                    : `${email.subject.slice(0, 20)}...`
+                  : "No subject"}
+              </p>
               <p>
                 <strong>Time: </strong>
                 {""}
