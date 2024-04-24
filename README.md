@@ -82,13 +82,18 @@ Things that can be improved about the app:
 
 ### Frontend
 
-- Add email paser for email content to disply the full email
+- Features to add:
+
+  - Delete individual emails
+
+  - Improve the design
+
+  - Handel attachments
 
 - Add CI/CD for frontend
 
 - Generate uniqe passwords for addresses
 
-- Rewrite frontend
-  - See `frontend/vite` branch
+- Add tests
 
 ### Infra

@@ -20,8 +20,23 @@ const DisplayEmails = ({ apiUrl, emails }: DisplayEmailsProps) => {
     <>
       <h2>Emails</h2>
 
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <div style={{ border: "2px solid black" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          maxHeight: "80vh",
+          maxWidth: "100vw",
+          overflow: "auto",
+        }}
+      >
+        <div
+          style={{
+            border: "2px solid black",
+            flex: 1,
+            maxHeight: "80vh",
+            overflow: "auto",
+          }}
+        >
           <p>There are {emails.length} emails</p>
           {emails.map((email) => (
             <div
@@ -33,9 +48,9 @@ const DisplayEmails = ({ apiUrl, emails }: DisplayEmailsProps) => {
             >
               <p>
                 {email.subject
-                  ? email.subject.length < 20
+                  ? email.subject.length < 30
                     ? email.subject
-                    : `${email.subject.slice(0, 20)}...`
+                    : `${email.subject.slice(0, 30)}...`
                   : "No subject"}
               </p>
               <p>
@@ -56,9 +71,10 @@ const DisplayEmails = ({ apiUrl, emails }: DisplayEmailsProps) => {
         <div
           style={{
             flex: 4,
-            padding: "10px",
-            backgroundColor: "ghostwhite",
+            paddingLeft: "10px",
             color: "black",
+            maxHeight: "80vh",
+            overflow: "auto",
           }}
         >
           {activeEmail ? (
