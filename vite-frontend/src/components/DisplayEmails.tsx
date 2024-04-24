@@ -73,8 +73,9 @@ const DisplayEmails = ({ apiUrl, emails }: DisplayEmailsProps) => {
             flex: 4,
             paddingLeft: "10px",
             color: "black",
-            maxHeight: "80vh",
+            height: "80vh",
             overflow: "auto",
+            backgroundColor: "ghostwhite",
           }}
         >
           {activeEmail ? (
