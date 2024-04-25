@@ -1,0 +1,24 @@
+.emailHeader {
+  background-color: cornsilk;
+  min-height: 140px;
+  padding: 1em;
+  padding-top: 0.5em;
+  border-radius: 1em;
+  margin-bottom: 1em;
+}
+
+.emailHeader h3 {
+  margin: 1em;
+  margin-left: 0;
+}
+
+.emailHeader strong {
+  font-weight: 300;
+}
+
+.emlViewer {
+  background-color: ghostwhite;
+  min-height: 250px;
+  padding: 1em;
+  border-radius: 1em;
+}

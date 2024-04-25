@@ -1,0 +1,38 @@
+.emailContainer {
+  display: flex;
+  justify-content: space-between;
+  height: 80vh;
+  max-width: 100vw;
+  overflow: auto;
+  color: black;
+  /* background-color: lightgrey; */
+}
+
+.emailList {
+  flex: 1;
+  max-height: 80vh;
+  overflow: auto;
+  border: 2px solid black;
+  border-radius: 1em;
+  box-shadow: 5px lightslategray;
+}
+
+.emailListCenter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.emailDetails {
+  border: 1px solid black;
+  margin: 5px;
+  padding: 5px;
+}
+
+.emailItem {
+  flex: 4;
+  max-height: 80vh;
+  overflow: auto;
+
+  padding-left: 10px;
+}

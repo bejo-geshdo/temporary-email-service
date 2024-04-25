@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Letter } from "react-letter";
 import { extract, LetterparserMail } from "letterparser";
 
+import style from "./DisplayEml.module.css";
 import { getDownloadUrl, rewriteSrc } from "../utils/handelEml";
 
 interface DisplayEmlProps {
@@ -23,20 +24,22 @@ const DisplayEml: React.FC<DisplayEmlProps> = ({ apiUrl, messageId }) => {
     });
   }, [apiUrl, messageId]);
 
-  if (!email || email === null) return <div>Loading...</div>;
+  if (!email || email === null)
+    return (
+      <div>
+        <div className={style.emailHeader}>
+          <h3>Loading...</h3>
+        </div>
+        <div className={style.emlViewer}>
+          <h3>Loading...</h3>
+        </div>
+      </div>
+    );
 
   return (
     <div>
-      <div
-        style={{
-          backgroundColor: "cornsilk",
-          padding: "1em",
-          paddingTop: "0.5em",
-          borderRadius: "1em",
-          marginBottom: "1em",
-        }}
-      >
-        <h3 style={{ margin: "0.2em", marginLeft: "0" }}>{email?.subject}</h3>
+      <div className={style.emailHeader}>
+        <h3>{email?.subject}</h3>
         <p>
           <strong>From:</strong> {email?.from?.name} &lt;{email?.from?.address}
           &gt;
@@ -50,22 +53,15 @@ const DisplayEml: React.FC<DisplayEmlProps> = ({ apiUrl, messageId }) => {
           </p>
         )}
       </div>
-      <div
-        style={{
-          backgroundColor: "ghostwhite",
-          padding: "1em",
-          borderRadius: "1em",
-        }}
-      >
-        <Letter
-          html={email?.html ? email?.html : ""}
-          text={email?.text}
-          rewriteExternalResources={(url) =>
-            rewriteSrc(url, email?.attachments || [])
-          }
-          allowedSchemas={["http", "https", "mailto", "cid"]}
-        />
-      </div>
+      <Letter
+        className={style.emlViewer}
+        html={email?.html ? email?.html : ""}
+        text={email?.text}
+        rewriteExternalResources={(url) =>
+          rewriteSrc(url, email?.attachments || [])
+        }
+        allowedSchemas={["http", "https", "mailto", "cid"]}
+      />
     </div>
   );
 };
