@@ -28,7 +28,14 @@ const DisplayEmails = ({ apiUrl, emails }: DisplayEmailsProps) => {
           {activeEmail ? (
             <DisplayEml apiUrl={apiUrl} messageId={activeEmail} />
           ) : (
-            <p>Your email will be displayed here</p>
+            <div className={style.emailItemPlaceholder}>
+              <p>Please select an email to read</p>
+              <img
+                src="https://res.cdn.office.net/assets/mail/illustrations/noMailSelected/v2/light.svg"
+                alt="Email icon"
+              />
+              <p>No email selected</p>
+            </div>
           )}
         </div>
       </div>

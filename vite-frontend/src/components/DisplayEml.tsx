@@ -26,8 +26,8 @@ const DisplayEml: React.FC<DisplayEmlProps> = ({ apiUrl, messageId }) => {
 
   if (!email || email === null)
     return (
-      <div>
-        <div className={style.emailHeader}>
+      <div className={style.container}>
+        <div className={`${style.emailHeader} ${style.loading}`}>
           <h3>Loading...</h3>
         </div>
         <div className={style.emlViewer}>
@@ -37,7 +37,7 @@ const DisplayEml: React.FC<DisplayEmlProps> = ({ apiUrl, messageId }) => {
     );
 
   return (
-    <div>
+    <div className={style.container}>
       <div className={style.emailHeader}>
         <h3>{email?.subject}</h3>
         <p>
@@ -53,15 +53,18 @@ const DisplayEml: React.FC<DisplayEmlProps> = ({ apiUrl, messageId }) => {
           </p>
         )}
       </div>
-      <Letter
-        className={style.emlViewer}
-        html={email?.html ? email?.html : ""}
-        text={email?.text}
-        rewriteExternalResources={(url) =>
-          rewriteSrc(url, email?.attachments || [])
-        }
-        allowedSchemas={["http", "https", "mailto", "cid"]}
-      />
+
+      <div className={style.scrollableContent}>
+        <Letter
+          className={style.emlViewer}
+          html={email?.html ? email?.html : ""}
+          text={email?.text}
+          rewriteExternalResources={(url) =>
+            rewriteSrc(url, email?.attachments || [])
+          }
+          allowedSchemas={["http", "https", "mailto", "cid"]}
+        />
+      </div>
     </div>
   );
 };

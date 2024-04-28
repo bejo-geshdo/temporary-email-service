@@ -1,4 +1,4 @@
-import style from "./DisplayEmails.module.css";
+import style from "./ListEmails.module.css";
 import { Email } from "../containers/EmailClient";
 
 interface DisplayEmailsProps {
@@ -6,30 +6,30 @@ interface DisplayEmailsProps {
   handleEmailClick: (messageId: string) => void;
 }
 
+const truncateSubject = (subject: string) => {
+  if (!subject) return "No subject";
+  return subject.length < 30 ? subject : `${subject.slice(0, 30)}...`;
+};
+
+const extractFromAddress = (from: string) => {
+  return from ? from.split("<")[0] : "No from address";
+};
+
 const ListEmails = ({ emails, handleEmailClick }: DisplayEmailsProps) => {
   return (
-    <>
-      <div className={style.emailList}>
-        <p className={style.emailListCenter}>
-          There are {emails.length} emails
-        </p>
+    <div className={style.emailList}>
+      <p className={style.emailListCenter}>There are {emails.length} emails</p>
+      <div className={style.scrollableContent}>
         {emails.map((email) => (
-          <div className={style.emailDetails}>
-            <p>
-              {email.subject
-                ? email.subject.length < 30
-                  ? email.subject
-                  : `${email.subject.slice(0, 30)}...`
-                : "No subject"}
-            </p>
+          <div key={email.messageId} className={style.emailDetails}>
+            <p>{truncateSubject(email.subject)}</p>
             <p>
               <strong>Time: </strong>
               {""}
               {new Date(email.ttl * 1000).toLocaleString()}
             </p>
             <p>
-              <strong>From:</strong>{" "}
-              {email.from ? email.from.split("<")[0] : "No from address"}
+              <strong>From:</strong> {extractFromAddress(email.from)}
             </p>
             <button onClick={() => handleEmailClick(email.messageId)}>
               Show/Hide Email
@@ -37,7 +37,7 @@ const ListEmails = ({ emails, handleEmailClick }: DisplayEmailsProps) => {
           </div>
         ))}
       </div>
-    </>
+    </div>
   );
 };
 
