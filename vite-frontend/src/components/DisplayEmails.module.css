@@ -3,7 +3,7 @@
   justify-content: space-between;
   height: 80vh;
   max-width: 100vw;
-  color: black;
+  /* color: black; */
 }
 
 .emailItem {
@@ -25,4 +25,14 @@
 .emailItemPlaceholder img {
   height: 150px;
   width: 150px;
+}
+
+@media (prefers-color-scheme: light) {
+  .emailContainer {
+    background-color: #f0f0f0;
+  }
+
+  .emailItem {
+    background-color: #f0f0f0;
+  }
 }
