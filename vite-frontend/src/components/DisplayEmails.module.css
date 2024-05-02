@@ -1,0 +1,28 @@
+.emailContainer {
+  display: flex;
+  justify-content: space-between;
+  height: 80vh;
+  max-width: 100vw;
+  color: black;
+}
+
+.emailItem {
+  flex: 4;
+  max-height: 80vh;
+  overflow: auto;
+
+  padding-left: 10px;
+}
+
+.emailItemPlaceholder {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.emailItemPlaceholder img {
+  height: 150px;
+  width: 150px;
+}

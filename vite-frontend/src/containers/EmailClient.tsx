@@ -43,6 +43,7 @@ export interface Email {
 
 export const EmailClient = () => {
   const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
   const [address, setAddress] = useState<Address>({
     msg: "",
     address: "",
@@ -108,12 +109,34 @@ export const EmailClient = () => {
       ) : (
         <>
           <p>{address.address}</p>
-          <button onClick={() => handleDeleteAddress(address.address, apiUrl)}>
-            Delete Address: {address.address}
-          </button>
-          <button onClick={() => handleExtendTime(address.address, apiUrl)}>
-            Extend time by 10 minutes
-          </button>
+          <div>
+            <button className="delete" onClick={() => setShowModal(true)}>
+              Delete Address: {address.address}
+            </button>
+            <button onClick={() => handleExtendTime(address.address, apiUrl)}>
+              Extend time by 10 minutes
+            </button>
+          </div>
+
+          {showModal && (
+            <div className="modal">
+              <div className="modal-content">
+                <h2>Confirm Deletion</h2>
+                <p>Are you sure you want to delete this address?</p>
+                <button
+                  className="delete"
+                  onClick={() =>
+                    handleDeleteAddress(address.address, apiUrl).then(() =>
+                      setShowModal(false)
+                    )
+                  }
+                >
+                  Confirm
+                </button>
+                <button onClick={() => setShowModal(false)}>Cancel</button>
+              </div>
+            </div>
+          )}
           <CountDown ttl={address.ttl} />
           <button onClick={() => handleGetEmails(address.address, apiUrl)}>
             Get Emails

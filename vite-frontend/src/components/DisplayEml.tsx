@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Letter } from "react-letter";
 import { extract, LetterparserMail } from "letterparser";
 
+import style from "./DisplayEml.module.css";
 import { getDownloadUrl, rewriteSrc } from "../utils/handelEml";
 
 interface DisplayEmlProps {
@@ -23,19 +24,48 @@ const DisplayEml: React.FC<DisplayEmlProps> = ({ apiUrl, messageId }) => {
     });
   }, [apiUrl, messageId]);
 
-  if (!email || email === null) return <div>Loading...</div>;
+  if (!email || email === null)
+    return (
+      <div className={style.container}>
+        <div className={`${style.emailHeader} ${style.loading}`}>
+          <h3>Loading...</h3>
+        </div>
+        <div className={style.emlViewer}>
+          <h3>Loading...</h3>
+        </div>
+      </div>
+    );
 
   return (
-    // Add some info to the top of the email about the email
-    // From name and email address, date, subject, and any other relevant info
-    <Letter
-      html={email?.html ? email?.html : ""}
-      text={email?.text}
-      rewriteExternalResources={(url) =>
-        rewriteSrc(url, email?.attachments || [])
-      }
-      allowedSchemas={["http", "https", "mailto", "cid"]}
-    />
+    <div className={style.container}>
+      <div className={style.emailHeader}>
+        <h3>{email?.subject}</h3>
+        <p>
+          <strong>From:</strong> {email?.from?.name} &lt;{email?.from?.address}
+          &gt;
+        </p>
+        <p>
+          <strong>To:</strong> {email?.to?.map((to) => to.name).join(", ")}
+        </p>
+        {email?.cc && email?.cc.length > 0 && (
+          <p>
+            <strong>Cc:</strong> {email?.cc?.map((cc) => cc.name).join(", ")}
+          </p>
+        )}
+      </div>
+
+      <div className={style.scrollableContent}>
+        <Letter
+          className={style.emlViewer}
+          html={email?.html ? email?.html : ""}
+          text={email?.text}
+          rewriteExternalResources={(url) =>
+            rewriteSrc(url, email?.attachments || [])
+          }
+          allowedSchemas={["http", "https", "mailto", "cid"]}
+        />
+      </div>
+    </div>
   );
 };
 

@@ -47,11 +47,12 @@ For now only the frontend can be run localy
 
 ### Frontend
 
-CD into the ./frontend directory and run:
+CD into the ./vite-frontend directory and run:
 
 1. `npm ci`
-2. `REACT_APP_API_URL=api.YOUR_DOMAIN npm run start`
-3. Access the app on http://localhost:3000
+2. ~~`REACT_APP_API_URL=api.YOUR_DOMAIN npm run start`~~
+3. `npm run dev`
+4. Access the app on http://localhost:3000
 
 ## Notes about the tech
 
@@ -82,13 +83,18 @@ Things that can be improved about the app:
 
 ### Frontend
 
-- Add email paser for email content to disply the full email
+- Features to add:
+
+  - Delete individual emails
+
+  - Improve the design
+
+  - Handel attachments
 
 - Add CI/CD for frontend
 
 - Generate uniqe passwords for addresses
 
-- Rewrite frontend
-  - See `frontend/vite` branch
+- Add tests
 
 ### Infra

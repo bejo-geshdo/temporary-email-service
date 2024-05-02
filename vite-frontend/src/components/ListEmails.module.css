@@ -1,0 +1,28 @@
+.emailList {
+  flex: 1;
+  max-height: 80vh;
+  overflow: auto;
+  border: 2px solid black;
+  border-radius: 1em;
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
+  box-sizing: border-box;
+}
+
+.emailListCenter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.scrollableContent {
+  max-height: 90%;
+  overflow: auto;
+  scrollbar-color: #888 #ffffff00;
+  scrollbar-width: thin;
+}
+
+.emailDetails {
+  border: 1px solid black;
+  margin: 5px;
+  padding: 5px;
+}

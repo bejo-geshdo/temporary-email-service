@@ -1,0 +1,41 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 80vh;
+}
+
+.emailHeader {
+  background-color: cornsilk;
+  flex-shrink: 0;
+  padding: 1em;
+  padding-top: 0.5em;
+  border-radius: 1em;
+  margin-bottom: 1em;
+}
+
+.emailHeader.loading {
+  min-height: 120px;
+}
+
+.emailHeader h3 {
+  margin: 1em;
+  margin-left: 0;
+}
+
+.emailHeader strong {
+  font-weight: 300;
+}
+
+.emlViewer {
+  background-color: ghostwhite;
+  padding: 1em;
+  border-radius: 1em;
+  border: 1px solid black;
+}
+
+.scrollableContent {
+  overflow-y: auto;
+  flex-grow: 1;
+  scrollbar-color: #888 #ffffff00;
+  scrollbar-width: thin;
+}
