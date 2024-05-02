@@ -1,0 +1,31 @@
+.navbarContainer {
+  background-color: #e0e2e4;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  height: 80px;
+}
+
+.navbarContainer nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+}
+
+.imgContainer {
+  margin-left: 20px;
+}
+
+.imgContainer img {
+  width: 50px;
+  height: 50px;
+}
+
+.navbarContainer ul {
+  list-style-type: none;
+  padding: 0;
+  display: flex;
+}
+
+.navbarContainer li {
+  margin-right: 20px;
+}

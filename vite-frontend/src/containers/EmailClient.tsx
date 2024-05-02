@@ -92,7 +92,7 @@ export const EmailClient = () => {
 
   return (
     <div>
-      <h1>Temporary serverless email experiment</h1>
+      <h1>Serverless temporary email experiment</h1>
 
       <p>This page let's you create a temporary email address</p>
       <p>The address and emails will be deleted after 10 minutes</p>
