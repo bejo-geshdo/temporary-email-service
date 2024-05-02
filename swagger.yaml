@@ -8,6 +8,10 @@ servers:
     variables:
       basePath:
         default: "dev"
+  - url: https://mxpd0fy4ji.execute-api.eu-west-1.amazonaws.com/{basePath}
+    variables:
+      basePath:
+        default: "dev"
 paths:
   /newAddress:
     post:
