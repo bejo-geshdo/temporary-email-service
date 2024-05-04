@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from "react";
 import style from "./ProgressBar.module.css";
+import { useAddressContext } from "../../contexts/address-context";
 
-interface CountDownProps {
-  ttl: number;
-}
-
-const ProgressBar = ({ ttl }: CountDownProps) => {
+const ProgressBar = () => {
   const [animationTime, setAnimationTime] = useState(0);
 
+  const { address } = useAddressContext();
+
   useEffect(() => {
-    const seconds = ttl - Math.floor(Date.now() / 1000);
+    const seconds = address.ttl - Math.floor(Date.now() / 1000);
 
     setAnimationTime(seconds);
   }, []); // Empty dependency array means this effect runs only once on mount

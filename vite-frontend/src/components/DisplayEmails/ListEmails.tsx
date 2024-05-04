@@ -1,8 +1,7 @@
 import style from "./ListEmails.module.css";
-import { Email } from "../../containers/EmailClient";
+import { useEmailsContext } from "../../contexts/emails-context";
 
 interface DisplayEmailsProps {
-  emails: Email[];
   handleEmailClick: (messageId: string) => void;
 }
 
@@ -15,7 +14,9 @@ const extractFromAddress = (from: string) => {
   return from ? from.split("<")[0] : "No from address";
 };
 
-const ListEmails = ({ emails, handleEmailClick }: DisplayEmailsProps) => {
+const ListEmails = ({ handleEmailClick }: DisplayEmailsProps) => {
+  const { emails } = useEmailsContext();
+
   return (
     <div className={style.emailList}>
       <p className={style.emailListCenter}>There are {emails.length} emails</p>

@@ -1,8 +1,8 @@
-import { Email } from "../containers/EmailClient";
+import { Emails } from "../contexts/emails-context";
 
 interface GetEmail {
   msg: string;
-  emails: Email[];
+  emails: Emails;
 }
 
 async function getEmails(address: string, apiUrl: string) {

@@ -7,6 +7,10 @@ import CountDown from "../components/CountDown/CountDown";
 import getEmails from "../utils/getEmails";
 import DisplayEmails from "../components/DisplayEmails/DisplayEmails";
 
+import { useAddressContext } from "../contexts/address-context";
+import { useEmailsContext } from "../contexts/emails-context";
+import AddressControl from "../components/AddressControl/AddressControl";
+
 // const apiUrl = process.env.REACT_APP_API_URL
 //   ? process.env.REACT_APP_API_URL
 //   : "https://api.dev.inboxdev.castrojonsson.se/";
@@ -14,43 +18,12 @@ const apiUrl = "https://mxpd0fy4ji.execute-api.eu-west-1.amazonaws.com/dev/";
 const secret = "password123";
 //TODO Change secret to randomized and store in state
 
-type EmailAddress = string;
-
-export interface Address {
-  msg: string;
-  address: string;
-  ttl: number;
-}
-
-export interface Email {
-  subject: string;
-  from: string; //Name + address like "John Doe <john.doe@test.com>
-  from_address: EmailAddress;
-  email: EmailAddress; //should be renamed to "to"
-  teaster: string;
-  domain: string;
-  created_at: number;
-  //Metadata
-  messageId: string;
-  spamVerdict: string;
-  virusVerdict: string;
-  to: EmailAddress[]; //A list of email addresses that the email was sent to
-  //DB fields
-  sk: string;
-  pk: string | EmailAddress;
-  ttl: number;
-}
-
 export const EmailClient = () => {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  //TODO Move address to context
-  const [address, setAddress] = useState<Address>({
-    msg: "",
-    address: "",
-    ttl: 0,
-  });
-  const [emails, setEmails] = useState<Email[]>([]);
+
+  const { address, setAddress } = useAddressContext();
+  const { emails, setEmails } = useEmailsContext();
 
   useEffect(() => {
     const savedAddress = localStorage.getItem("address");
@@ -126,11 +99,12 @@ export const EmailClient = () => {
               </div>
             </div>
           )}
-          <CountDown ttl={address.ttl} />
+          <AddressControl />
+          {/* <CountDown /> */}
           <button onClick={() => handleGetEmails(address.address, apiUrl)}>
             Get Emails
           </button>
-          <DisplayEmails apiUrl={apiUrl} emails={emails} />
+          <DisplayEmails apiUrl={apiUrl} />
         </>
       )}
     </div>

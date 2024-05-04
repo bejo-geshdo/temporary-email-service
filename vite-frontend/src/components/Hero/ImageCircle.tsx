@@ -12,9 +12,8 @@ const ImageCircle: FC<ImageCircleProps> = ({ images }) => {
   return (
     <div className={style.circleContainer}>
       {images.map((image, index) => (
-        <a href={image.url} target="_blank">
+        <a href={image.url} target="_blank" key={index}>
           <img
-            key={index}
             src={image.src}
             alt={image.alt ?? `Image ${index + 1}`}
             style={{

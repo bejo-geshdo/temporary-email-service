@@ -1,9 +1,6 @@
 import { useEffect, useState } from "react";
 import style from "./TimerClock.module.css";
-
-interface CountDownProps {
-  ttl: number;
-}
+import { useAddressContext } from "../../contexts/address-context";
 
 interface Time {
   minutes: number;
@@ -11,12 +8,14 @@ interface Time {
   secondsLeft: number;
 }
 
-const TimerClock = ({ ttl }: CountDownProps) => {
+const TimerClock = () => {
   const [time, setTime] = useState<Time>({
     minutes: 0,
     seconds: 0,
     secondsLeft: 0,
   });
+
+  const { address } = useAddressContext();
 
   useEffect(() => {
     let lastUpdate = Date.now();
@@ -29,13 +28,13 @@ const TimerClock = ({ ttl }: CountDownProps) => {
       if (delta >= 1000) {
         lastUpdate = now;
 
-        if (ttl < Math.floor(now / 1000)) {
+        if (address.ttl < Math.floor(now / 1000)) {
           setTime({ minutes: 0, seconds: 0, secondsLeft: 0 });
         } else {
-          const remainingTime = ttl - Math.floor(now / 1000);
+          const remainingTime = address.ttl - Math.floor(now / 1000);
           const minutes = Math.floor(remainingTime / 60);
           const seconds = remainingTime % 60;
-          const secondsLeft = ttl - Math.floor(now / 1000);
+          const secondsLeft = address.ttl - Math.floor(now / 1000);
 
           setTime({ minutes, seconds, secondsLeft });
         }
@@ -47,12 +46,13 @@ const TimerClock = ({ ttl }: CountDownProps) => {
     tick(); // start the loop
 
     return () => cancelAnimationFrame(animationFrameId);
-  }, [ttl]);
+  }, [address.ttl]);
 
   return (
     <div>
       <div className={style.clockContainer}>
         <p>
+          {/* TODO investigate why spans change size all the time*/}
           <span className={style.number}>
             {time.minutes < 10 ? `0${time.minutes}` : time.minutes}
           </span>
