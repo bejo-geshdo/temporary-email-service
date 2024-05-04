@@ -3,7 +3,7 @@ import { Letter } from "react-letter";
 import { extract, LetterparserMail } from "letterparser";
 
 import style from "./DisplayEml.module.css";
-import { getDownloadUrl, rewriteSrc } from "../utils/handelEml";
+import { getDownloadUrl, rewriteSrc } from "../../utils/handelEml";
 
 interface DisplayEmlProps {
   apiUrl: string;

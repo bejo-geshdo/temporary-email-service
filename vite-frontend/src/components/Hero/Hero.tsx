@@ -1,9 +1,9 @@
 import style from "./Hero.module.css";
-import SES from "../assets/aws/SES.svg";
-import Lambda from "../assets/aws/Lambda.svg";
-import S3 from "../assets/aws/S3.svg";
-import APIGateway from "../assets/aws/APIGateway.svg";
-import DynamoDB from "../assets/aws/DynamoDB.svg";
+import SES from "../../assets/aws/SES.svg";
+import Lambda from "../../assets/aws/Lambda.svg";
+import S3 from "../../assets/aws/S3.svg";
+import APIGateway from "../../assets/aws/APIGateway.svg";
+import DynamoDB from "../../assets/aws/DynamoDB.svg";
 import ImageCircle from "./ImageCircle";
 
 const Hero = () => {

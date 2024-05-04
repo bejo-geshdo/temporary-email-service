@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import style from "./CountDown.module.css";
-import React from "react";
 
 interface CountDownProps {
   ttl: number;
@@ -12,13 +10,12 @@ interface Time {
   secondsLeft: number;
 }
 
-const CountDown = ({ ttl }: CountDownProps) => {
+const TimerClock = ({ ttl }: CountDownProps) => {
   const [time, setTime] = useState<Time>({
     minutes: 0,
     seconds: 0,
     secondsLeft: 0,
   });
-  const [animationTime, setAnimationTime] = useState(0);
 
   useEffect(() => {
     let lastUpdate = Date.now();
@@ -51,32 +48,16 @@ const CountDown = ({ ttl }: CountDownProps) => {
     return () => cancelAnimationFrame(animationFrameId);
   }, [ttl]);
 
-  useEffect(() => {
-    const seconds = ttl - Math.floor(Date.now() / 1000);
-
-    setAnimationTime(seconds);
-  }, []); // Empty dependency array means this effect runs only once on mount
-
   return (
-    <div style={{ margin: "10em" }}>
+    <div>
       <h2>Countdown</h2>
       <p>
         {time.minutes < 10 ? `0${time.minutes}` : time.minutes}:
         {time.seconds < 10 ? `0${time.seconds}` : time.seconds}
       </p>
       <p>ttl: ${time.secondsLeft}</p>
-      <div
-        className={`${style.countdownBar} ${style.fadeAway}`}
-        style={
-          {
-            "--start-position": `-${100 - (animationTime / 600) * 100}%`,
-            "--animation-time": `${animationTime}s`,
-            animationDelay: `-${animationTime / 600}s`,
-          } as React.CSSProperties
-        }
-      ></div>
     </div>
   );
 };
 
-export default CountDown;
+export default TimerClock;

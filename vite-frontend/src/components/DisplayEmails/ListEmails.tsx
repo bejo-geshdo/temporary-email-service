@@ -1,5 +1,5 @@
 import style from "./ListEmails.module.css";
-import { Email } from "../containers/EmailClient";
+import { Email } from "../../containers/EmailClient";
 
 interface DisplayEmailsProps {
   emails: Email[];

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import style from "./DisplayEmails.module.css";
-import { Email } from "../containers/EmailClient";
+import { Email } from "../../containers/EmailClient";
 import DisplayEml from "./DisplayEml";
 import ListEmails from "./ListEmails";
 

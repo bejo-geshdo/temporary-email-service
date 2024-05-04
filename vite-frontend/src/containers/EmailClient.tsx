@@ -3,9 +3,9 @@ import { useState, useEffect } from "react";
 import newAddress from "../utils/newAddress";
 import deleteAddress from "../utils/deleteAddress";
 import extendTime from "../utils/extendTime";
-import CountDown from "../components/CountDown";
+import CountDown from "../components/CountDown/CountDown";
 import getEmails from "../utils/getEmails";
-import DisplayEmails from "../components/DisplayEmails";
+import DisplayEmails from "../components/DisplayEmails/DisplayEmails";
 
 // const apiUrl = process.env.REACT_APP_API_URL
 //   ? process.env.REACT_APP_API_URL
@@ -44,6 +44,7 @@ export interface Email {
 export const EmailClient = () => {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  //TODO Move address to context
   const [address, setAddress] = useState<Address>({
     msg: "",
     address: "",
