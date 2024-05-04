@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import style from "./TimerClock.module.css";
 
 interface CountDownProps {
   ttl: number;
@@ -50,12 +51,17 @@ const TimerClock = ({ ttl }: CountDownProps) => {
 
   return (
     <div>
-      <h2>Countdown</h2>
-      <p>
-        {time.minutes < 10 ? `0${time.minutes}` : time.minutes}:
-        {time.seconds < 10 ? `0${time.seconds}` : time.seconds}
-      </p>
-      <p>ttl: ${time.secondsLeft}</p>
+      <div className={style.clockContainer}>
+        <p>
+          <span className={style.number}>
+            {time.minutes < 10 ? `0${time.minutes}` : time.minutes}
+          </span>
+          :
+          <span className={style.number}>
+            {time.seconds < 10 ? `0${time.seconds}` : time.seconds}
+          </span>
+        </p>
+      </div>
     </div>
   );
 };
