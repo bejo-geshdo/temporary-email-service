@@ -4,6 +4,7 @@
   height: 80vh;
   max-width: 100vw;
   /* color: black; */
+  padding: 0 5px 0 5px;
 }
 
 .emailItem {

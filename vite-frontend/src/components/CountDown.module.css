@@ -1,0 +1,25 @@
+/* MyComponent.module.css */
+
+.countdownBar {
+  width: 100%;
+  height: 30px;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #020024 0%, #090979 35%, #00d4ff 100%);
+}
+
+.fadeAway {
+  animation-name: fadeAndMove;
+  animation-duration: var(--animation-time);
+  animation-fill-mode: forwards;
+  animation-delay: calc(var(--start-position) / 600);
+  animation-play-state: running;
+}
+
+@keyframes fadeAndMove {
+  0% {
+    transform: translateX(var(--start-position));
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
