@@ -44,6 +44,8 @@ export default function EmailsContextProvider({
 
   //TODO Change from short polling to websockets
   useEffect(() => {
+    let intervalId: NodeJS.Timeout;
+
     const fetchEmails = () => {
       const now = Date.now();
       if (address && address.ttl > Math.floor(now / 1000)) {
@@ -52,7 +54,9 @@ export default function EmailsContextProvider({
           setEmails(data);
         });
       } else {
-        clearInterval(intervalId);
+        if (intervalId) {
+          clearInterval(intervalId);
+        }
       }
     };
 
@@ -60,7 +64,7 @@ export default function EmailsContextProvider({
     fetchEmails();
 
     // Then set up the interval
-    const intervalId = setInterval(fetchEmails, 10000); // 10000 ms = 10 s
+    intervalId = setInterval(fetchEmails, 10000); // 10000 ms = 10 s
 
     // Clear the interval when the component unmounts
     return () => clearInterval(intervalId);
