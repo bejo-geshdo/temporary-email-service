@@ -6,7 +6,9 @@ export const DeleteAddress = () => {
 
   return (
     <>
-      <button onClick={() => setShowModal(true)}>Delete address 🗑️</button>
+      <button className="delete" onClick={() => setShowModal(true)}>
+        Delete address 🗑️
+      </button>
       {showModal && <DeleteModal setShowModal={setShowModal} />}
     </>
   );
