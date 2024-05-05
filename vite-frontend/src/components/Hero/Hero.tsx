@@ -7,6 +7,13 @@ import DynamoDB from "../../assets/aws/DynamoDB.svg";
 import ImageCircle from "./ImageCircle";
 
 const Hero = () => {
+  const handleScroll = () => {
+    window.scrollBy({
+      top: window.innerHeight, // 100vh
+      behavior: "smooth",
+    });
+  };
+
   return (
     <div className={style.heroContainer}>
       <div className={style.heroContent}>
@@ -56,6 +63,10 @@ const Hero = () => {
             ]}
           />
         </div>
+      </div>
+      <div className={style.bounceArrow} onClick={handleScroll}>
+        <p>Try the app</p>
+        <p>↓</p>
       </div>
     </div>
   );
