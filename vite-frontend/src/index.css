@@ -22,13 +22,9 @@ a:hover {
   color: #535bf2;
 }
 
-/* body {
+body {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-} */
+}
 
 h1 {
   font-size: 3.2em;
@@ -72,7 +68,7 @@ button.delete:hover {
 }
 
 .modal-content {
-  background-color: white;
+  background-color: #2d2d2d;
   padding: 20px;
   border-radius: 4px;
   width: 80%;
@@ -88,6 +84,9 @@ button.delete:hover {
     color: #747bff;
   }
   button {
+    background-color: #f9f9f9;
+  }
+  .modal-content {
     background-color: #f9f9f9;
   }
 }
