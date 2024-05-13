@@ -93,7 +93,7 @@ jobs:
 
       # Deploy to S3
       - name: Deploy to S3
-        run: aws s3 sync ./dist s3://${{ inputs.aws_bucket_name }}${{ inputs.aws_bucket_key }} --delete
+        run: aws s3 sync ${{ github.workspace }}dist s3://${{ inputs.aws_bucket_name }}${{ inputs.aws_bucket_key }} --delete
 
       # Invalidate CloudFront cache
       - name: Invalidate CloudFront cache
