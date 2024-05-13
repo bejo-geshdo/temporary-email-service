@@ -1,6 +1,8 @@
 name: Deploy frontend Prod
 
 on:
+  workflow_dispatch:
+
   push:
     branches:
       - main
