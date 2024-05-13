@@ -1,0 +1,101 @@
+name: frontend
+
+on:
+  workflow_call:
+    inputs:
+      aws_role:
+        required: true
+        description: "AWS role ARN"
+        type: string
+      aws_region:
+        required: true
+        description: "AWS region"
+        type: string
+
+      env_name:
+        required: false
+        description: "Environment name"
+        default: "dev"
+        type: string
+      code_dir:
+        required: false
+        description: "Directory where the code is located, used for monorepos. Needs to end with /"
+        type: string
+      node_version:
+        required: false
+        description: "Node version"
+        default: "18.x"
+        type: string
+
+      aws_bucket_name:
+        required: true
+        description: "S3 bucket name"
+        type: string
+      aws_bucket_key:
+        required: false
+        description: "S3 bucket key, needs to have / at the beginning"
+        type: string
+      aws_cloudfront_distribution_id:
+        required: false
+        description: "CloudFront distribution ID, used to invalidate cache"
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout the code
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Use cache to speed up the process
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{inputs.node_version}}
+          cache: "npm"
+          cache-dependency-path: ${{inputs.code_dir}}package-lock.json
+
+      # Install node packages
+      - name: Install node packages
+        working-directory: ${{inputs.code_dir}}
+        run: npm ci
+
+      # Build the frontend
+      - name: Build frontend
+        working-directory: ${{inputs.code_dir}}
+        run: npm run build
+
+      # Upload artifact to GH
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend
+          path: ${{inputs.code_dir}}dist
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      # Login to AWS
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ inputs.aws_role }}
+          aws-region: ${{ inputs.aws_region }}
+
+      # Download artifact from GH
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend
+          path: ${{ github.workspace }}dist
+
+      # Deploy to S3
+      - name: Deploy to S3
+        run: aws s3 sync ./dist s3://${{ inputs.aws_bucket_name }}${{ inputs.aws_bucket_key }} --delete
+
+      # Invalidate CloudFront cache
+      - name: Invalidate CloudFront cache
+        if: inputs.aws_cloudfront_distribution_id
+        run: aws cloudfront create-invalidation --distribution-id ${{ inputs.aws_cloudfront_distribution_id }} --paths "/*"
