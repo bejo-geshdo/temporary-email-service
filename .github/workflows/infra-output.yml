@@ -30,6 +30,7 @@ on:
     outputs:
       s3_bucket_name:
         description: "The name of the S3 bucket created by Terraform"
+        value: ${{ jobs.output.outputs.s3_bucket_name }}
 
 permissions:
   id-token: write
@@ -38,6 +39,8 @@ permissions:
 jobs:
   output:
     runs-on: ubuntu-latest
+    outputs:
+      s3_bucket_name: ${{ steps.tf_output.outputs.s3_bucket_name }}
 
     steps:
       - name: Checkout
@@ -66,5 +69,4 @@ jobs:
         id: tf_output
         working-directory: ${{inputs.code_dir}}
         run: |
-          s3_bucket_name=$(terraform output -raw frontend_s3bucket)
-          echo "::set-output name=s3_bucket_name::$s3_bucket_name"
+          echo "s3_bucket_name=$(terraform output -raw frontend_s3bucket)" >> $GITHUB_OUTPUT
