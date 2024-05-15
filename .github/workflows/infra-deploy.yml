@@ -1,0 +1,138 @@
+name: Deploy Infra with Terraform
+
+on:
+  workflow_call:
+    inputs:
+      aws_role:
+        required: true
+        description: "AWS role ARN used by Terraform to deploy the infrastructure"
+        type: string
+      aws_region:
+        required: true
+        description: "AWS region"
+        type: string
+      aws_account_id:
+        required: true
+        description: "AWS account ID"
+        type: string
+
+      env_name:
+        required: false
+        description: "Environment name"
+        default: "dev"
+        type: string
+      code_dir:
+        required: false
+        description: "Directory where the code is located, used for monorepos. Needs to end with /"
+        type: string
+      tf_version:
+        required: false
+        description: "Terraform version"
+        default: "latest"
+        type: string
+
+      project_name:
+        required: true
+        description: "Project name, Max 10 characters"
+        type: string
+      email_domain:
+        required: true
+        description: "Email domain"
+        type: string
+      hosted_zone_id:
+        required: true
+        description: "Hosted zone ID of the Route53 hosted zone for the domain"
+        type: string
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  # Validates and creates a plan for Terraform
+  plan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ inputs.aws_role }}
+          aws-region: ${{ inputs.aws_region }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{inputs.tf_version}}
+      - name: Create tfvars file
+        run: |
+          echo "name = \"${{inputs.project_name}}\"" > ${{inputs.code_dir}}${{inputs.env_name}}.tfvars
+          echo "aws_account_id = \"${{inputs.aws_account_id}}\"" >> ${{inputs.code_dir}}${{inputs.env_name}}.tfvars
+          echo "email_domain = \"${{inputs.email_domain}}\"" >> ${{inputs.code_dir}}${{inputs.env_name}}.tfvars
+          echo "hosted_zone_id = \"${{inputs.hosted_zone_id}}\"" >> ${{inputs.code_dir}}${{inputs.env_name}}.tfvars
+          echo "env = \"${{inputs.env_name}}\"" >> ${{inputs.code_dir}}${{inputs.env_name}}.tfvars
+
+      - name: Terraform Init
+        working-directory: ${{inputs.code_dir}}
+        run: terraform init -upgrade
+      - name: Terraform Workspace
+        working-directory: ${{inputs.code_dir}}
+        run: terraform workspace select -or-create ${{inputs.env_name}}
+      - name: Terraform Format
+        working-directory: ${{inputs.code_dir}}
+        run: terraform fmt -check
+      - name: Terraform Plan
+        working-directory: ${{inputs.code_dir}}
+        run: terraform plan -var-file=${{inputs.env_name}}.tfvars -input=false
+
+      - name: Upload TF plan artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform-plan
+          path: ${{inputs.code_dir}}${{inputs.env_name}}.tfvars
+
+      - name: Upload tfvars file
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform-plan
+          path: ${{inputs.code_dir}}${{inputs.env_name}}.tfvars
+
+  # Deploys the infrastructure with Terraform useing the plan created in the previous step
+  deploy:
+    runs-on: ubuntu-latest
+    needs: plan
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ inputs.aws_role }}
+          aws-region: ${{ inputs.aws_region }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{inputs.tf_version}}
+
+      - name: Terraform Init
+        working-directory: ${{inputs.code_dir}}
+        run: terraform init
+      - name: Terraform Workspace
+        working-directory: ${{inputs.code_dir}}
+        run: terraform workspace select ${{inputs.env_name}}
+
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: terraform-plan
+          path: ${{inputs.code_dir}}
+
+      # - name: Terraform Apply
+      #   working-directory: ${{inputs.code_dir}}
+      #   run: terraform apply -var-file=${{inputs.env_name}}.tfvars -auto-approve -input=false

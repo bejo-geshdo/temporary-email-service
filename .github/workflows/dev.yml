@@ -1,52 +1,28 @@
-name: Update dev Infra
+name: Deploy Infra and frontend DEV
 
 on:
+  workflow_dispatch:
+
   push:
     branches:
-      - dev
+      - main
 
 permissions:
   id-token: write
   contents: read
 
-env:
-  AWS_DEFAULT_REGION: eu-central-1
-  credentials-account: arn:aws:iam::833095292836:role/Github-Terraform
-  ENV_NAME: dev
-
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          role-to-assume: ${{ env.credentials-account }}
-          aws-region: ${{ env.AWS_DEFAULT_REGION }}
+  deploy-infra:
+    uses: ./.github/workflows/infra-deploy.yml
+    with:
+      aws_role: ${{ vars.DEV_INFRA_AWS_ROLE }}
+      aws_region: ${{ vars.DEV_AWS_REGION }}
+      aws_account_id: ${{ vars.DEV_AWS_ACCOUNT_ID }}
 
-      - name: Checkout
-        uses: actions/checkout@v3
+      env_name: dev
+      code_dir: ${{ vars.INFRA_CODE_DIR }}
+      tf_version: ${{ vars.TF_VERSION }}
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: 1.6.4
-
-      - name: Terraform Init
-        working-directory: ./TF
-        run: terraform init
-      - name: Terraform Workspace
-        working-directory: ./TF
-        run: terraform workspace select -or-create ${{ env.ENV_NAME }}
-      - name: Terraform Format
-        working-directory: ./TF
-        run: terraform fmt -check
-      - name: Terraform Plan
-        working-directory: ./TF
-        run:
-          terraform plan -var-file=${{ env.ENV_NAME }}.tfvars -input=false
-          # On push to "main", deploy the Terraform infrastructure
-      - name: Terraform Apply
-        working-directory: ./TF
-        if: github.ref == 'refs/heads/dev'
-        run: terraform apply -var-file=${{ env.ENV_NAME }}.tfvars -auto-approve -input=false
+      project_name: ${{ vars.PROJECT_NAME }}
+      email_domain: ${{ vars.DEV_EMAIL_DOMAIN }}
+      hosted_zone_id: ${{ vars.DEV_AWS_HOSTED_ZONE_ID }}
