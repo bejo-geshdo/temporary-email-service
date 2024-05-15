@@ -12,11 +12,6 @@ on:
         description: "AWS region"
         type: string
 
-      env_name:
-        required: false
-        description: "Environment name"
-        default: "dev"
-        type: string
       code_dir:
         required: false
         description: "Directory where the code is located, used for monorepos. Needs to end with /"

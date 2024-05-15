@@ -19,8 +19,8 @@ jobs:
   deploy:
     uses: ./.github/workflows/frontend.yml
     with:
-      aws_role: arn:aws:iam::275567994947:role/terraform-20231219172347146900000001
-      aws_region: eu-central-1
+      aws_role: $PROD_FRONTEND_AWS_ROLE
+      aws_region: $PROD_AWS_REGION
 
-      code_dir: vite-frontend/
-      aws_bucket_name: inboxnow-dev-frontend-275567994947
+      code_dir: $FRONTEND_CODE_DIR
+      aws_bucket_name: $PROD_FRONTEND_AWS_BUCKET_NAME
