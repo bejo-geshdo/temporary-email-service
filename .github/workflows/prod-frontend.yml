@@ -19,8 +19,8 @@ jobs:
   deploy:
     uses: ./.github/workflows/frontend.yml
     with:
-      aws_role: $PROD_FRONTEND_AWS_ROLE
-      aws_region: $PROD_AWS_REGION
+      aws_role: ${{ vars.PROD_FRONTEND_AWS_ROLE }}
+      aws_region: ${{ vars.PROD_AWS_REGION }}
 
-      code_dir: $FRONTEND_CODE_DIR
-      aws_bucket_name: $PROD_FRONTEND_AWS_BUCKET_NAME
+      code_dir: ${{ vars.FRONTEND_CODE_DIR }}
+      aws_bucket_name: ${{ vars.PROD_FRONTEND_AWS_BUCKET_NAME }}
