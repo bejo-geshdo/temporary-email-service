@@ -43,4 +43,4 @@ jobs:
     steps:
       - name: Echo output
         run: |
-          echo "S3 bucket name: ${{ jobs.output-infra.outputs.s3_bucket_name }}"
+          echo "S3 bucket name: ${{ needs.output-infra.outputs.s3_bucket_name }}"
