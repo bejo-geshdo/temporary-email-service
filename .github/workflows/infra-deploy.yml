@@ -144,7 +144,7 @@ jobs:
           terraform_version: ${{inputs.tf_version}}
       - name: Terraform Init
         working-directory: ${{inputs.code_dir}}
-        run: terraform init
+        run: terraform init -upgrade
       - name: Terraform Workspace
         working-directory: ${{inputs.code_dir}}
         run: terraform workspace select ${{inputs.env_name}}
