@@ -142,3 +142,7 @@ resource "aws_route53_record" "cloud_front" {
 output "frontend_s3bucket" {
   value = aws_s3_bucket.frontend_bucket.id
 }
+
+output "frontend_cloudfront_id" {
+  value = aws_cloudfront_distribution.cloud_front.id
+}
