@@ -105,20 +105,20 @@ jobs:
 
       - name: Terraform Plan
         working-directory: ${{inputs.code_dir}}
-        run: terraform plan -var-file=${{inputs.env_name}}.tfvars -input=false
+        run: terraform plan -var-file=${{inputs.env_name}}.tfvars -input=false -out=${{inputs.env_name}}-tfplan
 
         # Uploads the plan file as an artifact to be used in the next job
       - name: Upload TF plan artifact
         uses: actions/upload-artifact@v4
         with:
-          name: terraform-plan
-          path: ${{inputs.code_dir}}${{inputs.env_name}}.tfvars
+          name: ${{inputs.env_name}}-tfplan
+          path: ${{inputs.code_dir}}${{inputs.env_name}}-tfplan
 
         # Uploads the tfvars file as an artifact if we need to debug
       - name: Upload tfvars file
         uses: actions/upload-artifact@v4
         with:
-          name: terraform-plan
+          name: ${{inputs.env_name}}.tfvars
           path: ${{inputs.code_dir}}${{inputs.env_name}}.tfvars
 
   # Deploys the infrastructure with Terraform useing the plan created in the previous step
@@ -152,9 +152,9 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: terraform-plan
+          name: ${{inputs.env_name}}-tfplan
           path: ${{inputs.code_dir}}
 
       # - name: Terraform Apply
       #   working-directory: ${{inputs.code_dir}}
-      #   run: terraform apply -var-file=${{inputs.env_name}}.tfvars -auto-approve -input=false
+      #   run: terraform apply -auto-approve -input=false ${{inputs.env_name}}-tfplan
