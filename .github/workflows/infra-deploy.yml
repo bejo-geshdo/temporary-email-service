@@ -155,6 +155,6 @@ jobs:
           name: ${{inputs.env_name}}-tfplan
           path: ${{inputs.code_dir}}
 
-      # - name: Terraform Apply
-      #   working-directory: ${{inputs.code_dir}}
-      #   run: terraform apply -auto-approve -input=false ${{inputs.env_name}}-tfplan
+      - name: Terraform Apply
+        working-directory: ${{inputs.code_dir}}
+        run: terraform apply -auto-approve -input=false ${{inputs.env_name}}-tfplan

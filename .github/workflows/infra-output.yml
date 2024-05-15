@@ -1,0 +1,70 @@
+name: Get Outputs from terraform
+
+on:
+  workflow_call:
+    inputs:
+      aws_role:
+        required: true
+        description: "AWS role ARN used by Terraform to deploy the infrastructure"
+        type: string
+      aws_region:
+        required: true
+        description: "AWS region"
+        type: string
+
+      env_name:
+        required: false
+        description: "Environment name"
+        default: "dev"
+        type: string
+      code_dir:
+        required: false
+        description: "Directory where the code is located, used for monorepos. Needs to end with /"
+        type: string
+      tf_version:
+        required: false
+        description: "Terraform version"
+        default: "latest"
+        type: string
+
+    outputs:
+      s3_bucket_name:
+        description: "The name of the S3 bucket created by Terraform"
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  output:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+        # Configure AWS credentials
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ inputs.aws_role }}
+          aws-region: ${{ inputs.aws_region }}
+
+        # Set up and configure Terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{inputs.tf_version}}
+      - name: Terraform Init
+        working-directory: ${{inputs.code_dir}}
+        run: terraform init -upgrade
+      - name: Terraform Workspace
+        working-directory: ${{inputs.code_dir}}
+        run: terraform workspace select -or-create ${{inputs.env_name}}
+
+      - name: Terraform Output
+        id: tf_output
+        working-directory: ${{inputs.code_dir}}
+        run: |
+          s3_bucket_name=$(terraform output -raw frontend_s3bucket)
+          echo "::set-output name=s3_bucket_name::$s3_bucket_name"

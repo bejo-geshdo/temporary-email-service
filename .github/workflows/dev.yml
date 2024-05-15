@@ -26,3 +26,21 @@ jobs:
       project_name: ${{ vars.PROJECT_NAME }}
       email_domain: ${{ vars.DEV_EMAIL_DOMAIN }}
       hosted_zone_id: ${{ vars.DEV_AWS_HOSTED_ZONE_ID }}
+
+  output-infra:
+    uses: ./.github/workflows/infra-output.yml
+    needs: deploy-infra
+    with:
+      aws_role: ${{ vars.DEV_INFRA_AWS_ROLE }}
+      aws_region: ${{ vars.DEV_AWS_REGION }}
+      code_dir: ${{ vars.INFRA_CODE_DIR }}
+      tf_version: ${{ vars.TF_VERSION }}
+      env_name: dev
+
+  echo-output:
+    runs-on: ubuntu-latest
+    needs: [deploy-infra, output-infra]
+    steps:
+      - name: Echo output
+        run: |
+          echo "S3 bucket name: ${{ jobs.output-infra.outputs.s3_bucket_name }}"
