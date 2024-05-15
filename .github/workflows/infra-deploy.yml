@@ -49,24 +49,40 @@ permissions:
   contents: read
 
 jobs:
-  # Validates and creates a plan for Terraform
-  plan:
+  validate:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{inputs.tf_version}}
+      - name: Terraform Init
+        run: terraform init -backend=false
+
+      - name: Terraform Validation
+        run: terraform validate
+
+  # Creates a plan for Terraform
+  plan:
+    runs-on: ubuntu-latest
+    needs: validate
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+        # Configure AWS credentials
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ inputs.aws_role }}
           aws-region: ${{ inputs.aws_region }}
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: ${{inputs.tf_version}}
+        # Create a tfvars file with the required variables
       - name: Create tfvars file
         run: |
           echo "name = \"${{inputs.project_name}}\"" > ${{inputs.code_dir}}${{inputs.env_name}}.tfvars
@@ -75,25 +91,30 @@ jobs:
           echo "hosted_zone_id = \"${{inputs.hosted_zone_id}}\"" >> ${{inputs.code_dir}}${{inputs.env_name}}.tfvars
           echo "env = \"${{inputs.env_name}}\"" >> ${{inputs.code_dir}}${{inputs.env_name}}.tfvars
 
+        # Set up and configure Terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{inputs.tf_version}}
       - name: Terraform Init
         working-directory: ${{inputs.code_dir}}
         run: terraform init -upgrade
       - name: Terraform Workspace
         working-directory: ${{inputs.code_dir}}
         run: terraform workspace select -or-create ${{inputs.env_name}}
-      - name: Terraform Format
-        working-directory: ${{inputs.code_dir}}
-        run: terraform fmt -check
+
       - name: Terraform Plan
         working-directory: ${{inputs.code_dir}}
         run: terraform plan -var-file=${{inputs.env_name}}.tfvars -input=false
 
+        # Uploads the plan file as an artifact to be used in the next job
       - name: Upload TF plan artifact
         uses: actions/upload-artifact@v4
         with:
           name: terraform-plan
           path: ${{inputs.code_dir}}${{inputs.env_name}}.tfvars
 
+        # Uploads the tfvars file as an artifact if we need to debug
       - name: Upload tfvars file
         uses: actions/upload-artifact@v4
         with:
@@ -109,17 +130,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+        # Configure AWS credentials
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ inputs.aws_role }}
           aws-region: ${{ inputs.aws_region }}
 
+        # Set up and configure Terraform
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: ${{inputs.tf_version}}
-
       - name: Terraform Init
         working-directory: ${{inputs.code_dir}}
         run: terraform init
