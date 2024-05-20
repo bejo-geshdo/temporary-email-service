@@ -35,9 +35,17 @@ on:
         description: "CloudFront distribution ID, used to invalidate cache"
         type: string
 
+      api_domain:
+        required: true
+        description: "API domain"
+        type: string
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      VITE_API_URL: ${{ inputs.api_domain }}
+
     steps:
       # Checkout the code
       - name: Checkout

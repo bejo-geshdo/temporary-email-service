@@ -39,6 +39,10 @@ on:
         required: true
         description: "Email domain"
         type: string
+      api_domain:
+        required: true
+        description: "API domain"
+        type: string
       hosted_zone_id:
         required: true
         description: "Hosted zone ID of the Route53 hosted zone for the domain"
@@ -88,6 +92,7 @@ jobs:
           echo "name = \"${{inputs.project_name}}\"" > ${{inputs.code_dir}}${{inputs.env_name}}.tfvars
           echo "aws_account_id = \"${{inputs.aws_account_id}}\"" >> ${{inputs.code_dir}}${{inputs.env_name}}.tfvars
           echo "email_domain = \"${{inputs.email_domain}}\"" >> ${{inputs.code_dir}}${{inputs.env_name}}.tfvars
+          echo "api_domain = \"${{inputs.api_domain}}\"" >> ${{inputs.code_dir}}${{inputs.env_name}}.tfvars
           echo "hosted_zone_id = \"${{inputs.hosted_zone_id}}\"" >> ${{inputs.code_dir}}${{inputs.env_name}}.tfvars
           echo "env = \"${{inputs.env_name}}\"" >> ${{inputs.code_dir}}${{inputs.env_name}}.tfvars
 

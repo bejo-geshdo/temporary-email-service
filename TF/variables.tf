@@ -23,6 +23,11 @@ variable "email_domain" {
   # }
 }
 
+variable "api_domain" {
+  type        = string
+  description = "The domain name to use for the API service."
+}
+
 variable "hosted_zone_id" {
   type        = string
   description = "The ID of the public hosted zone in route53"

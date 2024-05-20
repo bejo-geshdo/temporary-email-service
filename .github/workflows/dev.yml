@@ -25,6 +25,7 @@ jobs:
 
       project_name: ${{ vars.PROJECT_NAME }}
       email_domain: ${{ vars.DEV_EMAIL_DOMAIN }}
+      api_domain: ${{ vars.DEV_API_DOMAIN }}
       hosted_zone_id: ${{ vars.DEV_AWS_HOSTED_ZONE_ID }}
 
   output-infra:
@@ -49,3 +50,5 @@ jobs:
       code_dir: ${{ vars.FRONTEND_CODE_DIR }}
       aws_bucket_name: ${{ needs.output-infra.outputs.s3_bucket_name }}
       aws_cloudfront_distribution_id: ${{ needs.output-infra.outputs.cloudfront_id }}
+
+      api_domain: https://${{ vars.DEV_API_DOMAIN }}/

@@ -1,5 +1,5 @@
 locals {
-  api_domain = "api.${var.email_domain}"
+  api_domain = var.api_domain
 }
 
 resource "aws_api_gateway_rest_api" "api_gw" {
@@ -120,6 +120,7 @@ resource "aws_acm_certificate" "api_cert" {
 # }
 
 resource "aws_route53_record" "api_cert" {
+  depends_on = [aws_acm_certificate.api_cert]
   for_each = {
     for dvo in aws_acm_certificate.api_cert.domain_validation_options : dvo.domain_name => {
       name    = dvo.resource_record_name

@@ -1,7 +1,8 @@
 import { useAddressContext } from "../../contexts/address-context";
 import extendTime from "../../utils/extendTime";
 
-const apiUrl = "https://mxpd0fy4ji.execute-api.eu-west-1.amazonaws.com/dev/";
+const apiUrl =
+  import.meta.env.VITE_API_URL || "https://api.dev.inboxdev.castrojonsson.se/";
 
 //TODO disabled button if time has run out
 const ExtendTimeButton = () => {

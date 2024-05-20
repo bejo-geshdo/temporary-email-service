@@ -41,7 +41,9 @@ export default function AddressContextProvider({
     secret: "",
   });
 
-  const apiUrl = "https://mxpd0fy4ji.execute-api.eu-west-1.amazonaws.com/dev/";
+  const apiUrl =
+    import.meta.env.VITE_API_URL ||
+    "https://api.dev.inboxdev.castrojonsson.se/";
 
   useEffect(() => {
     const savedAddress = localStorage.getItem("address");

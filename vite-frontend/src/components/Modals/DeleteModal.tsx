@@ -6,7 +6,8 @@ type DeleteModalProps = {
   setShowModal: (value: boolean) => void;
 };
 
-const apiUrl = "https://mxpd0fy4ji.execute-api.eu-west-1.amazonaws.com/dev/";
+const apiUrl =
+  import.meta.env.VITE_API_URL || "https://api.dev.inboxdev.castrojonsson.se/";
 
 const DeleteModal = ({ setShowModal }: DeleteModalProps) => {
   const { address, setAddress } = useAddressContext();
