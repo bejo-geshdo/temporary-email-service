@@ -71,7 +71,7 @@ jobs:
 
       # Copy diagram so we can link to it in GitHub README
       - name: Copy diagram
-        run: cp infra.drawio.svg ${{inputs.code_dir}dist
+        run: cp infra.drawio.svg ${{inputs.code_dir}}dist
         continue-on-error: true # Ignore if the diagram is not present
 
       # Upload artifact to GH
