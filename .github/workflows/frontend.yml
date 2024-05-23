@@ -69,6 +69,11 @@ jobs:
         working-directory: ${{inputs.code_dir}}
         run: npm run build
 
+      # Copy diagram so we can link to it in GitHub README
+      - name: Copy diagram
+        run: cp infra.drawio.svg ${{inputs.code_dir}dist
+        continue-on-error: true # Ignore if the diagram is not present
+
       # Upload artifact to GH
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -92,15 +97,11 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: frontend
-          path: ${{ github.workspace }}dist
+          path: ${{ github.workspace }}/dist
 
       # Deploy to S3
       - name: Deploy to S3
-        run: aws s3 sync ${{ github.workspace }}dist s3://${{ inputs.aws_bucket_name }}${{ inputs.aws_bucket_key }} --delete
-
-      # Copy the diagram to the root of the bucket
-      - name: TBD
-        run: aws s3 cp infra.drawio.svg s3://${{ inputs.aws_bucket_name }}/infra.drawio.svg
+        run: aws s3 sync ${{ github.workspace }}/dist s3://${{ inputs.aws_bucket_name }}${{ inputs.aws_bucket_key }} --delete
 
       # Invalidate CloudFront cache
       - name: Invalidate CloudFront cache

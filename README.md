@@ -57,9 +57,9 @@ CD into the ./vite-frontend directory and run:
 
 ## Notes about the tech
 
-The frontend is a react app hosted in a S3 bucket with cloud front infront of it
+The frontend is a static vite app hosted in a S3 bucket with cloud front infront of it
 
-The backend is sevral microservices written in Python running on lambda.
+The backend is sevral microservices written in Python running on AWS lambda.
 AWS REST API GW sits infront of the lambda and directs trafic to the diffrent function/endpoints
 
 The infrastructure is managed by Terraform
