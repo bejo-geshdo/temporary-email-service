@@ -35,11 +35,12 @@ See variables.tf
 
 1. CD into TF folder
 2. `terraform init`
-3. `terraform plan -out tfplan`
-4. `terraform apply tfplan`
-5. CD into frontend folder
-6. Build frontend: `REACT_APP_API_URL=api.YOUR_DOMAIN npn run build`
-7. Deploy frontend: `aws s3 sync build/ s3://YOUR_S3_BUCKET_NAME`
+3. `terraform workspace select -or-create YOUR_WORKSPACE_NAME`
+4. `terraform plan -var-file=YOUR_TFVARS_FILE -out tfplan`
+5. `terraform apply tfplan`
+6. CD into frontend folder
+7. Build frontend: `VITE_API_URL=api.YOUR_DOMAIN npn run build`
+8. Deploy frontend: `aws s3 sync dist/ s3://YOUR_S3_BUCKET_NAME`
 
 ## Running localy
 
@@ -50,9 +51,9 @@ For now only the frontend can be run localy
 CD into the ./vite-frontend directory and run:
 
 1. `npm ci`
-2. ~~`REACT_APP_API_URL=api.YOUR_DOMAIN npm run start`~~
+2. ~~`VITE_API_URL=api.YOUR_DOMAIN npm run dev`~~
 3. `npm run dev`
-4. Access the app on http://localhost:3000
+4. Access the app on http://localhost:5173/
 
 ## Notes about the tech
 
@@ -87,14 +88,12 @@ Things that can be improved about the app:
 
   - Delete individual emails
 
-  - Improve the design
+  - Mobile view
 
   - Handel attachments
-
-- Add CI/CD for frontend
-
-- Generate uniqe passwords for addresses
 
 - Add tests
 
 ### Infra
+
+- Refactor the terraform code

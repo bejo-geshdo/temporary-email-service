@@ -98,6 +98,10 @@ jobs:
       - name: Deploy to S3
         run: aws s3 sync ${{ github.workspace }}dist s3://${{ inputs.aws_bucket_name }}${{ inputs.aws_bucket_key }} --delete
 
+      # Copy the diagram to the root of the bucket
+      - name: TBD
+        run: aws s3 cp infra.drawio.svg s3://${{ inputs.aws_bucket_name }}/infra.drawio.svg
+
       # Invalidate CloudFront cache
       - name: Invalidate CloudFront cache
         if: inputs.aws_cloudfront_distribution_id

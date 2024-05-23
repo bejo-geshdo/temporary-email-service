@@ -1,0 +1,6 @@
+name = "NAME_OF_YOUR_PROJECT"
+aws_account_id = "012345678901"
+email_domain   = "YOUR_DOMAIN_FOR_WEBSITE_AND_EMAIL"
+api_domain     = "YOUR_DOMAIN_FOR_API"
+hosted_zone_id = "HOSTED_ZONE_ID_FROM_ROUTE53"
+env            = "DEV_OR_PROD_OR_ANYTHING_ELSE"

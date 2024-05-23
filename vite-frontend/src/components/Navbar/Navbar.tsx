@@ -18,7 +18,12 @@ const Navbar = () => {
             <a href="/">Home</a>
           </li>
           <li>
-            <a href="/">About</a>
+            <a
+              href="https://github.com/bejo-geshdo/temporary-email-service"
+              target="_blank"
+            >
+              About
+            </a>
           </li>
         </ul>
       </nav>

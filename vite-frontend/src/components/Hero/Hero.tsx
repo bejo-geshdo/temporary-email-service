@@ -30,6 +30,15 @@ const Hero = () => {
             AWS Simple email services recives the emails and Lambda functions
             handels all the logic
           </p>
+          <p>
+            You can read about how it works on my{" "}
+            <a
+              href="https://github.com/bejo-geshdo/temporary-email-service"
+              target="_blank"
+            >
+              GitHub page
+            </a>
+          </p>
           <p></p>
         </div>
         <div className={style.imageContainer}>
